@@ -1,0 +1,10 @@
+{
+  "name": "tankinduck-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "build": "node --check site-data.js && node --check app.js"
+  }
+}
