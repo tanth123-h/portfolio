@@ -201,13 +201,13 @@ export const portfolio = {
       media: media({ photos: [asset('./public/assets/photos/youth-innovation-event.jpg', 'Youth Innovation event', 'Youth Innovation activity')], certificateImages: [asset('./public/assets/certificates/youth-innovation-final-bronze-certificate.png', 'Bronze certificate', 'Youth Innovation Bronze certificate')], pdfs: [asset('./public/assets/pdfs/youth-innovation-research.pdf', 'Research document', 'Youth research PDF')], videos: [], graphics: [] }),
     },
     {
-      id: 'grow-a-garden-science', title: 'Grow a Garden: Science Project Extension', type: 'School-network science competition',
+      id: 'grow-a-garden-science', title: 'Grow a Garden: Science Project Extension', type: 'Private-school network science competition',
       date: '19 September 2026', dateTh: '19 กันยายน 2569',
-      summary: 'Extended Grow a Garden into a science project in the invention category for a private-school network competition, earning Gold and first place.',
-      problem: 'A working innovation can become stronger when its design, testing, evidence, and explanation are developed as a science project.',
-      whatIDid: 'Extended Grow a Garden beyond innovation competitions, prepared the invention project for school-network science competition, explained the system and demonstrated the prototype with the team.',
-      challenge: 'Learn a new competition format: explain the project as a scientific invention with evidence, not only as an innovation idea.',
-      whatILearned: 'This was my first science-project competition. I learned to turn an innovation into a more structured scientific project, connect the prototype to evidence, and communicate the process clearly.',
+      summary: 'I developed Grow a Garden further and entered it in the invention category of the annual academic skills competition for schools in the Diocese of Nakhon Ratchasima. The event took place on 19 September 2026 in connection with Private Education Day. The project received Gold and first place.',
+      problem: 'A working innovation needs more than a good idea. It needs a clear design, a testable process, evidence from the prototype, and an explanation that judges can follow.',
+      whatIDid: 'I took Grow a Garden, an AI and IoT smart-farming project, and developed it into a science project for the private-school network competition. I helped prepare the invention presentation, explain the software and hardware system, demonstrate the prototype, answer questions, and present the project with my team.',
+      challenge: 'This was my first science-project competition after usually competing in innovation events. I had to explain Grow a Garden as a tested invention, connect the prototype to evidence, and communicate the method clearly within the judging format.',
+      whatILearned: 'I learned how to turn an innovation prototype into a more structured science project: define the problem, explain the design, observe results, support claims with evidence, and improve the story through questions from judges. I also learned that software, hardware, testing, and presentation must support one another.',
       skills: ['Science project', 'Software development', 'Hardware prototyping', 'Project presentation', 'Teamwork'], links: {},
       media: media({
         photos: [
