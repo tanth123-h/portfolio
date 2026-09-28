@@ -1,72 +1,480 @@
-import { portfolio } from './site-data.js';
+import { portfolio } from "./site-data.js?v=20260928";
+import { ui, thEntries } from "./content.js?v=20260928";
 
-const $ = (s, root = document) => root.querySelector(s);
-const $$ = (s, root = document) => [...root.querySelectorAll(s)];
-let language = 'en';
-let priorFocus;
-
-const ui = {
-  en: { home:'Home', about:'About', skills:'Skills', projects:'Projects', achievements:'Achievements', journey:'Journey', gallery:'Gallery', contact:'Contact', portfolio:'Portfolio · 2026', title:'Student · AI Builder · Creator', intro:'I build practical AI and technology ideas that help people, farms, and communities.', viewProjects:'View projects', aboutMe:'About me', aboutKicker:'About me', aboutTitle:'I like turning a curious question into something people can use.', aboutOne:'I am Tankhun, an AI-programme student at Maryvit Nakhon Ratchasima. My work moves between computer vision, physical prototypes, research, and clear presentations.', aboutTwo:'I am most motivated by projects that begin with an everyday problem: safer online decisions, smarter agriculture, or a better way to explain an idea. Outside a project, I keep learning through competitions, hardware, and teamwork.', facts:['AI learner','Maker','Research presenter'], skillsKicker:'Skills', skillsTitle:'Tools I use to turn ideas into prototypes.', skillsIntro:'Technical work, clear communication, and teamwork belong in the same toolkit.', projectsKicker:'Portfolio', projectsTitle:'Selected work', projectsIntro:'Open any project to see media, documents, and full case study.', achievementsKicker:'Achievements', achievementsTitle:'Awards and participation', achievementsNote:'Check titles, dates, and roles in site-data.js before publishing.', journeyKicker:'My journey', journeyTitle:'Going deeper through every project.', journeyIntro:'Each stage adds another layer: learning, testing, presenting, and building with people.', galleryKicker:'Photo memories', galleryTitle:'Moments behind work', galleryIntro:'Photos are part of every story—not decoration.', contactKicker:'Contact', contactTitle:"Let's build something useful.", contactIntro:'For projects, collaboration, or university opportunities.', email:'Email', github:'GitHub', linkedin:'LinkedIn', contactPlaceholder:'Add contact details in site-data.js before publishing.', overview:'Overview', problem:'Problem', did:'What I did', challenge:'Challenge', learned:'What I learned', note:'Note', closeDetails:'Close details', closeImage:'Close image', open:'Open', photos:'Photos', certificateImages:'Certificate', pdfs:'PDF', videos:'Video', graphics:'Graphics', openPdf:'Open PDF', downloadPdf:'Download PDF', openVideo:'Open video', downloadVideo:'Download video', noVideo:'Your browser cannot play this video.', footer:'Built from real competition work, research, and reflections.', backTop:'Back to top' },
-  th: { home:'หน้าแรก', about:'เกี่ยวกับฉัน', skills:'ทักษะ', projects:'ผลงาน', achievements:'รางวัล', journey:'เส้นทาง', gallery:'ภาพกิจกรรม', contact:'ติดต่อ', portfolio:'แฟ้มสะสมผลงาน · 2569', title:'นักเรียน · นักสร้าง AI · นักพัฒนา', intro:'ผมสร้างไอเดีย AI และเทคโนโลยีที่ช่วยผู้คน เกษตรกร และชุมชน', viewProjects:'ดูผลงาน', aboutMe:'เกี่ยวกับฉัน', aboutKicker:'เกี่ยวกับฉัน', aboutTitle:'ผมชอบเปลี่ยนคำถามที่สงสัยให้เป็นสิ่งที่ผู้คนใช้งานได้จริง', aboutOne:'ผมชื่อแทนคุณ เป็นนักเรียนแผนการเรียน AI โรงเรียนมารีย์วิทยา นครราชสีมา สนใจงานคอมพิวเตอร์วิทัศน์ ต้นแบบฮาร์ดแวร์ งานวิจัย และการนำเสนอให้เข้าใจง่าย', aboutTwo:'ผมสนใจโครงงานที่เริ่มจากปัญหาใกล้ตัว เช่น ความปลอดภัยออนไลน์ เกษตรอัจฉริยะ หรือการสื่อสารไอเดียให้ชัดเจน นอกห้องเรียนผมเรียนรู้ผ่านการแข่งขัน ฮาร์ดแวร์ และการทำงานเป็นทีม', facts:['ผู้เรียนรู้ AI','นักสร้างต้นแบบ','ผู้นำเสนองานวิจัย'], skillsKicker:'ทักษะ', skillsTitle:'เครื่องมือที่ผมใช้เปลี่ยนไอเดียเป็นต้นแบบ', skillsIntro:'งานเทคนิค การสื่อสาร และการทำงานเป็นทีม สำคัญพอ ๆ กัน', projectsKicker:'ผลงาน', projectsTitle:'ผลงานที่คัดเลือก', projectsIntro:'เปิดผลงานเพื่อดูสื่อ เอกสาร และรายละเอียดโครงงาน', achievementsKicker:'รางวัลและกิจกรรม', achievementsTitle:'รางวัลและการเข้าร่วม', achievementsNote:'ตรวจสอบชื่อ วันที่ และบทบาทใน site-data.js ก่อนเผยแพร่', journeyKicker:'เส้นทางของผม', journeyTitle:'ลึกขึ้นทุกครั้งที่ลงมือทำ', journeyIntro:'แต่ละช่วงเวลาเพิ่มประสบการณ์ใหม่ ทั้งการเรียนรู้ ทดลอง นำเสนอ และสร้างงานกับผู้อื่น', galleryKicker:'ภาพกิจกรรม', galleryTitle:'ช่วงเวลาหลังผลงาน', galleryIntro:'ภาพถ่ายเป็นส่วนหนึ่งของทุกเรื่องราว ไม่ใช่แค่ของตกแต่ง', contactKicker:'ติดต่อ', contactTitle:'มาสร้างสิ่งที่มีประโยชน์ด้วยกัน', contactIntro:'สำหรับโครงงาน การร่วมงาน หรือโอกาสด้านการศึกษา', email:'อีเมล', github:'GitHub', linkedin:'LinkedIn', contactPlaceholder:'เพิ่มข้อมูลติดต่อใน site-data.js ก่อนเผยแพร่', overview:'ภาพรวม', problem:'ปัญหาที่ต้องการแก้', did:'สิ่งที่ผมทำ', challenge:'ความท้าทาย', learned:'สิ่งที่ได้เรียนรู้', note:'หมายเหตุ', closeDetails:'ปิดรายละเอียด', closeImage:'ปิดภาพ', open:'เปิด', photos:'ภาพถ่าย', certificateImages:'ใบประกาศ', pdfs:'PDF', videos:'วิดีโอ', graphics:'โปสเตอร์', openPdf:'เปิด PDF', downloadPdf:'ดาวน์โหลด PDF', openVideo:'เปิดวิดีโอ', downloadVideo:'ดาวน์โหลดวิดีโอ', noVideo:'เบราว์เซอร์นี้ไม่รองรับวิดีโอ', footer:'สร้างจากผลงานการแข่งขัน งานวิจัย และประสบการณ์จริง', backTop:'กลับด้านบน' },
+const $ = (selector, root = document) => root.querySelector(selector);
+let language = "en";
+const copy = () => ui[language];
+const escape = (value = "") =>
+  String(value).replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        char
+      ],
+  );
+const entries = [...portfolio.projects, ...portfolio.achievements];
+const local = (entry) =>
+  language === "th" ? { ...entry, ...thEntries[entry.id] } : entry;
+const optimized = (src, width = 640) =>
+  "./public/assets/optimized/" +
+  src.replace("./public/assets/", "").replace(/[/.]/g, "-") +
+  "-" +
+  width +
+  ".webp";
+const date = (entry) => (language === "th" ? entry.dateTh : entry.date);
+const external = 'target="_blank" rel="noopener noreferrer"';
+const conceptPath = {
+  vision:
+    "M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
+  tree: "M12 3v7M5 10h14M5 10v7M19 10v7M9 3h6v4H9Z M2 17h6v4H2Z M16 17h6v4h-6Z",
+  chip: "M7 7h10v10H7ZM9 2v5m6-5v5M9 17v5m6-5v5M2 9h5m-5 6h5m10-6h5m-5 6h5",
+  chat: "M4 4h16v12H9l-5 4V4Zm4 5h8m-8 3h5",
+  research: "M9 3h6m-5 0v7l-5 9v2h14v-2l-5-9V3M8 16h8",
+  people: "M15 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M5 21v-3a7 7 0 0 1 14 0v3",
+  code: "m8 5-6 7 6 7m8-14 6 7-6 7M14 3l-4 18",
 };
-
-const thEntries = {
-  agri:{title:'Grow a Garden: ผู้ช่วยวางแผนฟาร์มอัจฉริยะ',type:'AI เพื่อการเกษตร',summary:'แนวคิดวางแผนฟาร์มด้วย AI, GPS และ IoT ที่วิเคราะห์ดิน อากาศ พืช ต้นทุน และข้อมูลตลาด',problem:'เกษตรกรต้องการข้อมูลที่ชัดเจนเพื่อเลือกพืช วางแผนแปลง ตรวจดิน และจัดการต้นทุน',whatIDid:'นำทิศทางโครงงานและการนำเสนอ พัฒนาซอฟต์แวร์ และสนับสนุนฮาร์ดแวร์ สำหรับแนวคิดวางแผนฟาร์มด้วยข้อมูลและเรื่องราวของแอปพลิเคชัน',challenge:'รวมข้อมูลดิน อากาศ พืช ต้นทุน และตลาดให้เป็นคำแนะนำที่เกษตรกรเข้าใจง่าย',whatILearned:'เทคโนโลยีเกษตรมีประโยชน์ที่สุดเมื่อข้อมูลภาคสนามที่ซับซ้อนกลายเป็นการตัดสินใจที่ใช้งานได้จริง',skills:['ภาวะผู้นำทีม','การนำเสนอ','พัฒนาซอฟต์แวร์','ต้นแบบฮาร์ดแวร์','การวิเคราะห์ AI','IoT']},
-  'phishwall-ai':{title:'PhishWall AI',type:'ความปลอดภัยไซเบอร์',summary:'แนวคิด Edge AI หลายชั้นสำหรับตรวจจับเว็บฟิชชิงและเว็บไซต์ที่ไม่น่าเชื่อถือแบบเรียลไทม์',problem:'หน้าเว็บฟิชชิงใหม่อาจหลบเลี่ยงการป้องกันแบบบัญชีดำ และทำให้ข้อมูลส่วนตัวเสี่ยง',whatIDid:'นำทิศทางทีมและการนำเสนอ พัฒนาซอฟต์แวร์ สนับสนุนฮาร์ดแวร์ และจัดทำแนวทางวิเคราะห์ AI กับสื่อนำเสนอ',challenge:'สร้างสมดุลระหว่างความแม่นยำ ความเป็นส่วนตัว และประสบการณ์ใช้งานที่รวดเร็วบนอุปกรณ์',whatILearned:'เครื่องมือไซเบอร์ซีเคียวริตี้ควรทำให้การป้องกันเข้าใจง่ายและใช้ได้จริง',skills:['ภาวะผู้นำทีม','การนำเสนอ','พัฒนาซอฟต์แวร์','ต้นแบบฮาร์ดแวร์','Edge AI','ความปลอดภัยไซเบอร์']},
-  troposense:{title:'TropoSense',type:'แนวคิดนวัตกรรมสุขภาพ',summary:'แนวคิดคัดกรองภาวะหัวใจฉุกเฉินระยะแรกด้วยเครื่องตรวจน้ำตาลที่ปรับใช้ใหม่ ชุดตรวจ cTnI, AI OCR และ TropoBot',problem:'การคัดกรองภาวะหัวใจระยะแรกอาจช้าและเข้าถึงยากก่อนผู้ป่วยถึงการดูแลเฉพาะทาง',whatIDid:'นำทิศทางโครงงานและการนำเสนอ พัฒนาซอฟต์แวร์ สนับสนุนต้นแบบฮาร์ดแวร์ และจัดทำข้อเสนอร่วมกับทีม',challenge:'สื่อสารนวัตกรรมสุขภาพให้ชัดเจน โดยระบุขอบเขตว่าเป็นการคัดกรองเบื้องต้น ไม่ใช่การวินิจฉัยโรค',whatILearned:'นวัตกรรมสุขภาพที่ดีต้องมีหลักฐาน ขอบเขตความรับผิดชอบ และเส้นทางจากข้อมูลต้นแบบสู่การใช้งานที่ชัดเจน',skills:['ออกแบบนวัตกรรม','AI OCR','ต้นแบบฮาร์ดแวร์','พัฒนาซอฟต์แวร์','การนำเสนอ']},
-  'youth-innovation':{title:'Heritage AI: แพลตฟอร์ม Smart Heritage AIoT',type:'งานวิจัยนวัตกรรม AIoT ระดับประเทศ',summary:'แพลตฟอร์ม AIoT สำหรับโบราณสถานไทย ช่วยผู้ดูแลจัดการผู้เข้าชม และช่วยนักท่องเที่ยวเข้าถึงข้อมูลมรดกทางวัฒนธรรม',problem:'โบราณสถานต้องการการนับผู้เข้าชม การติดตามความหนาแน่น และข้อมูลประวัติศาสตร์ที่เข้าถึงง่ายและถูกต้อง',whatIDid:'นำทิศทางโครงงาน นำเสนอภาษาอังกฤษ พัฒนาซอฟต์แวร์ และสนับสนุนการเชื่อมต่อฮาร์ดแวร์ร่วมกับทีม',challenge:'เชื่อมระบบตรวจจับคนแบบเรียลไทม์ เครื่องมือข้อมูล และข้อมูลสำหรับนักท่องเที่ยวให้เป็นแพลตฟอร์มเดียว',whatILearned:'ระบบ AIoT มีประโยชน์มากขึ้นเมื่อข้อมูลการตรวจจับ การตัดสินใจของผู้ดูแล และประสบการณ์ผู้เข้าชมทำงานร่วมกัน',skills:['YOLOv8','AIoT','React','FastAPI','RAG chatbot','การนำเสนอภาษาอังกฤษ']},
-  cityflowbkk:{title:'CityFlowBKK',type:'แฮกกาธอน',summary:'ต้นแบบจาก Bangkok Hackathon 3 วัน ที่ผ่านเข้าสู่ 20 ทีมสุดท้าย เพื่อแก้ปัญหาเมืองด้วย CityFlowBKK',problem:'ปัญหากรุงเทพฯ ต้องการไอเดียเทคโนโลยีที่ใช้ได้จริง โดยมองผู้คน ระบบเมือง และข้อจำกัดจริงร่วมกัน',whatIDid:'นำทิศทางโครงงานและการนำเสนอ พัฒนาซอฟต์แวร์ และสนับสนุนต้นแบบฮาร์ดแวร์กับทีมตลอด 3 วัน',challenge:'เปลี่ยนปัญหาเมืองเป็นต้นแบบที่ทำงานและนำเสนอได้ภายในเวลา 3 วัน',whatILearned:'การทำต้นแบบเร็วมีประสิทธิภาพเมื่อทีมเลือกสิ่งสำคัญ ทดสอบเร็ว และมองปัญหาผู้ใช้ตลอดเวลา',skills:['กระบวนการแฮกกาธอน','พัฒนาต้นแบบ','พัฒนาซอฟต์แวร์','การนำเสนอ','ภาวะผู้นำทีม']},
-  'depa-2026-third-place':{title:'depa 2026: Bronze ระดับภูมิภาค · ผ่านสู่รอบประเทศ',type:'รางวัลระดับภูมิภาคและผ่านเข้าสู่รอบระดับประเทศ',summary:'ได้รับรางวัล Bronze ระดับภูมิภาคจากผลงาน Grow a Garden และผ่านเข้าสู่การแข่งขันรอบระดับประเทศ',whatIDid:'นำเสนอ Grow a Garden ร่วมกับทีมในรอบระดับภูมิภาค และเตรียมพัฒนาโครงงานสำหรับการแข่งขันระดับประเทศ',whatILearned:'กรรมการให้ความสำคัญกับหลักฐาน ความชัดเจน และการแก้ปัญหาที่ตรงกับความต้องการจริง การผ่านสู่รอบประเทศทำให้ต้องเตรียมการทดสอบและการนำเสนอให้แข็งแรงขึ้น',skills:['การนำเสนอ','AI เพื่อการเกษตร','ผ่านเข้าสู่รอบประเทศ']},
-  'youth-bronze':{title:'Youth Innovation: รางวัลเหรียญทองแดง',type:'รางวัลการแข่งขันระดับประเทศ',summary:'ได้รับรางวัลเหรียญทองแดงจากการนำเสนอ Heritage AI นวัตกรรม AIoT สำหรับโบราณสถานไทย เป็นภาษาอังกฤษในเชียงใหม่',whatIDid:'นำทิศทาง Heritage AI การนำเสนอ ซอฟต์แวร์ และสนับสนุนฮาร์ดแวร์ร่วมกับทีม',whatILearned:'การนำเสนอภาษาอังกฤษพัฒนาจากการเตรียมตัว ฝึกซ้อม และเข้าใจทั้งงานวิจัยกับต้นแบบอย่างลึกซึ้ง',skills:['การนำเสนอภาษาอังกฤษ','AIoT','ภาวะผู้นำทีม']},
-  'grow-a-garden-science':{
-    title:'Grow a Garden: รางวัลโครงงานวิทยาศาสตร์',
-    type:'การแข่งขันทักษะวิชาการโรงเรียนในเครือสังฆมณฑลนครราชสีมา',
-    summary:'ผมนำ Grow a Garden ไปพัฒนาต่อและส่งแข่งขันโครงงานวิทยาศาสตร์ประเภทสิ่งประดิษฐ์ ในการแข่งขันทักษะวิชาการนักเรียนโรงเรียนในเครือสังฆมณฑลนครราชสีมา วันที่ 19 กันยายน 2569 เนื่องในวันการศึกษาเอกชน ผลงานได้รับรางวัลระดับเหรียญทอง ชนะเลิศ',
-    problem:'การนำต้นแบบนวัตกรรมเข้าสู่การแข่งขันโครงงานวิทยาศาสตร์ต้องแสดงการออกแบบ การทดสอบ และหลักฐานอย่างชัดเจน',
-    whatIDid:'ผมพัฒนาต้นแบบ Grow a Garden ร่วมกับทีม เตรียมบอร์ดและการนำเสนอ อธิบายระบบซอฟต์แวร์กับฮาร์ดแวร์ สาธิตการทำงาน และตอบคำถามกรรมการ',
-    challenge:'นี่เป็นครั้งแรกที่ผมแข่งขันโครงงานวิทยาศาสตร์ เพราะก่อนหน้านี้แข่งด้านนวัตกรรมเป็นหลัก ผมต้องเรียบเรียงปัญหา วิธีทำงาน การทดสอบ และผลลัพธ์ให้เป็นเรื่องเดียวกัน',
-    whatILearned:'ผมได้เรียนรู้การต่อยอดนวัตกรรมให้เป็นโครงงานวิทยาศาสตร์ที่มีขั้นตอนและหลักฐานรองรับ การทดสอบกับคำถามจากกรรมการช่วยให้เห็นจุดที่ต้องอธิบายและพัฒนาต่อ',
-    skills:['โครงงานวิทยาศาสตร์','AI เพื่อการเกษตร','พัฒนาซอฟต์แวร์','ต้นแบบฮาร์ดแวร์','การนำเสนอโครงงาน']
-  },
-  'idektep-honorable-mention':{title:'iDektep Coding: Python for AI Challenge 2026',type:'เวิร์กช็อปและการแข่งขัน AI',summary:'กิจกรรม Python for AI 2 วัน: เวิร์กช็อป Object Detection วันแรก แข่งขันวันที่สอง และได้รับรางวัลชมเชย',problem:'โมเดล Object Detection ต้องมีขั้นตอนจัดการข้อมูล เทรน ทดสอบ และประเมินผลอย่างเป็นระบบ',whatIDid:'เรียนรู้การเทรนโมเดล Object Detection ผ่าน Jupyter Notebook ในวันเวิร์กช็อป แล้วนำขั้นตอนไปใช้ในการแข่งขันวันถัดไป',challenge:'เปลี่ยนจากการเทรนแบบมีผู้สอน ไปสู่โจทย์แข่งขันที่มีเวลาจำกัด',whatILearned:'ได้เรียนรู้ Object Detection การเทรนโมเดล และการใช้ Jupyter Notebook เพื่อทำงานแบบเทรน-ทดสอบ-ปรับปรุงอย่างชัดเจน',skills:['Python','Jupyter Notebook','Object Detection','การเทรนโมเดล','การประเมินผลโมเดล']},
-  'tira-iot-training':{title:'อบรม TIRA Arduino IoT',type:'การอบรมเชิงปฏิบัติการ',summary:'การอบรม Arduino และ IoT แบบลงมือทำที่มหาวิทยาลัยราชภัฏสวนสุนันทา ได้สร้าง ทดสอบ และเรียนรู้จากงานคอมพิวเตอร์กายภาพ',whatIDid:'ทำกิจกรรม Arduino และ IoT เชื่อมต่อวงจร เซนเซอร์ และซอฟต์แวร์ พร้อมทดสอบผลของแต่ละส่วนในระบบ',challenge:'การแก้ปัญหาระบบกายภาพต้องตรวจโค้ด สายไฟ พลังงาน เซนเซอร์ และผลลัพธ์อย่างเป็นขั้นตอน',whatILearned:'การทำคอมพิวเตอร์กายภาพที่เชื่อถือได้ต้องทดสอบทุกการเชื่อมต่อ สังเกตพฤติกรรมระบบ และแก้ปัญหาทีละจุด',skills:['Arduino','IoT','ฮาร์ดแวร์','เซนเซอร์','การแก้ปัญหา']},
-  'minister-exhibition':{title:'Hairline Detector: ตัวแทนโรงเรียนมารีย์วิทยา',type:'นิทรรศการนวัตกรรมโรงเรียน',summary:'ได้รับเลือกจากโรงเรียนมารีย์วิทยาให้นำเสนอ Hairline Detector ในงาน Korat Next-Gen All For Education ที่รัฐมนตรีว่าการกระทรวงศึกษาธิการเข้าร่วม',whatIDid:'เป็นตัวแทนนักเรียนนำเสนอ Hairline Detector อธิบายจุดประสงค์ สาธิตการทำงาน และตอบคำถามผู้เข้าชมนิทรรศการ',challenge:'นำเสนอโครงงาน AI ให้ผู้ชมที่มีพื้นฐานเทคนิคต่างกันเข้าใจได้อย่างถูกต้องและชัดเจน',whatILearned:'การนำเสนอสาธารณะที่ดีเชื่อมงานเทคนิคกับประโยชน์จริง และปรับคำอธิบายให้เหมาะกับผู้ฟัง',skills:['การสื่อสารสาธารณะ','การนำเสนอนิทรรศการ','AI vision','การสาธิต']},
-  'depa-2025-national':{title:'depa 2025: รอบระดับประเทศ',type:'รอบการแข่งขันระดับประเทศ',summary:'ผ่านเข้าสู่รอบระดับประเทศของการแข่งขัน depa พร้อมภาพกิจกรรมและเอกสารการรับรอง',whatIDid:'รับผิดชอบงานซอฟต์แวร์และฮาร์ดแวร์ส่วนใหญ่ของทีม พร้อมช่วยเตรียมและนำเสนอโครงงานในระดับประเทศ',whatILearned:'การเตรียมงานระดับประเทศต้องมีหลักฐานที่ชัดเจน เล่าเรื่องให้เข้าใจง่าย และทำงานกับทีมให้แน่นขึ้น',skills:['การพัฒนาซอฟต์แวร์','ต้นแบบฮาร์ดแวร์','การนำเสนอการแข่งขัน','การทำงานเป็นทีม'],note:'ความเกี่ยวข้องของ Orion.pdf กับรายการนี้ยังไม่แน่ชัด จึงเก็บไฟล์ไว้ในคลังสื่อและยังไม่นำมาแสดง'},
-};
-const thGallery = [['สร้างผลงานที่ depa 2026','ช่วงเวลาการแข่งขันเบื้องหลังโครงงาน Agri'],['Youth Innovation','เส้นทางงานวิจัยและการนำเสนอระดับประเทศ'],['Bangkok Hackathon','การทำงานร่วมกันอย่างรวดเร็วใน CityFlowBKK'],['อบรม TIRA','เรียนรู้จากการลงมือทำ Arduino และ IoT']];
-const esc = (v='') => String(v).replace(/[&<>"]/g, x => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]));
-const t = () => ui[language];
-const local = entry => language === 'th' && thEntries[entry.id] ? {...entry,...thEntries[entry.id]} : entry;
-const all = () => [...portfolio.projects,...portfolio.achievements].map(local);
-const eventDate = entry => language === 'th' && entry.dateTh ? entry.dateTh : entry.date;
-const tags = items => `<div class="tags">${items.map(item=>`<span>${esc(item)}</span>`).join('')}</div>`;
-
-function card(entry, kind) {
-  const featured = entry.media.graphics[0] || entry.media.photos[0] || entry.media.certificateImages[0];
-  const story=kind==='project'?`<div class="project-story"><p><strong>${esc(t().did)}</strong>${esc(entry.whatIDid)}</p><p><strong>${esc(t().learned)}</strong>${esc(entry.whatILearned)}</p></div>`:'';
-  const achievementDetail=kind==='achievement'?`<div class="achievement-detail"><span><strong>${esc(t().did)}</strong>${esc(entry.whatIDid)}</span><span><strong>${esc(t().learned)}</strong>${esc(entry.whatILearned)}</span></div>`:'';
-  const dated=eventDate(entry)?`<time class="entry-date">${language==='th'?'วันที่เข้าร่วม:':'Participation:'} ${esc(eventDate(entry))}</time>`:'';
-  const logo=skill=>{const key=skill.toLowerCase();const dev=key.includes('python')?'devicon-python-plain colored':key.includes('react')?'devicon-react-original colored':key.includes('fastapi')?'devicon-fastapi-plain colored':key.includes('arduino')||key.includes('iot')?'devicon-arduino-plain colored':key.includes('javascript')?'devicon-javascript-plain colored':key.includes('html')?'devicon-html5-plain colored':key.includes('css')?'devicon-css3-plain colored':key.includes('c language')?'devicon-c-plain colored':key.includes('jupyter')?'devicon-jupyter-plain colored':'';return dev?`<i class="project-skill-icon ${dev}" aria-hidden="true"></i>`:`<span class="project-skill-icon project-skill-glyph" aria-hidden="true">${key.includes('decision')?'⌘':key.includes('detect')||key.includes('vision')||key.includes('yolo')?'◉':key.includes('edge')?'◈':key.includes('rag')?'◇':key.includes('hardware')||key.includes('prototype')?'▣':'✦'}</span>`};
-  const skillTags=entry.skills.map(s=>`<span class="mini-skill">${logo(s)}${esc(s)}</span>`).join('');
-  const cover=featured?`<img class="${kind==='project'?'case-cover':'achievement-cover'}" src="${esc(featured.src)}" alt="">`:'';
-  return `<article class="${kind==='project'?'case-study':'achievement-card'}" ${kind==='achievement'?`tabindex="0" data-entry="${entry.id}" role="button" aria-label="${t().open} ${esc(entry.title)}"`:''}>${cover}${kind==='achievement'?'<span class="badge">✦</span>':''}<span class="entry-type">${esc(entry.type)}</span>${dated}<h3>${esc(entry.title)}</h3><p>${esc(entry.summary)}</p>${story}${achievementDetail}<div class="card-footer"><div class="mini-tags">${skillTags}</div><button class="view-button" data-entry="${entry.id}" aria-label="${t().open} ${esc(entry.title)}">↗</button></div></article>`;
+function icon(label) {
+  const key = label.toLowerCase();
+  const logos = {
+    python: "python",
+    javascript: "javascript",
+    html: "html5",
+    css: "css3",
+    opencv: "opencv",
+    jupyter: "jupyter",
+    arduino: "arduino",
+    flutter: "flutter",
+    kotlin: "kotlin",
+    fastapi: "fastapi",
+  };
+  const match = Object.keys(logos).find((name) => key.includes(name));
+  if (match || key === "c")
+    return (
+      '<img class="icon" alt="" width="20" height="20" src="./public/assets/icons/' +
+      (match ? logos[match] : "c") +
+      '.svg">'
+    );
+  const path = /tree/.test(key)
+    ? "tree"
+    : /yolo|vision|detect|classification|ocr/.test(key)
+      ? "vision"
+      : /rag|chat/.test(key)
+        ? "chat"
+        : /research|วิจัย/.test(key)
+          ? "research"
+          : /lead|pitch|นำเสนอ|ทีม/.test(key)
+            ? "people"
+            : /iot|edge|hardware|ฮาร์ดแวร์/.test(key)
+              ? "chip"
+              : "code";
+  return (
+    '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="' +
+    conceptPath[path] +
+    '"/></svg>'
+  );
 }
-function renderProfile() { $('#name-th').textContent=portfolio.profile.nameTh; $('#name-en').textContent=portfolio.profile.nameEn; $('#profile-title').textContent=t().title; $('#intro').textContent=t().intro; $('#hero-reflection').textContent=language==='th'?'ผมได้ทำโครงงาน AI, IoT และนวัตกรรม พร้อมเรียนรู้การเปลี่ยนปัญหาจริงให้เป็นต้นแบบ การนำเสนอ และการทำงานเป็นทีม':'I have built AI, IoT, and innovation projects while learning to turn real problems into prototypes, clear presentations, and teamwork.'; const meta=language==='th'?[['โรงเรียน','มารีย์วิทยา นครราชสีมา'],['ระดับชั้น','ม.5/10 · แผนการเรียน AI'],['ความสนใจ','AI · IoT · นวัตกรรม']]:[['School','Maryvit Nakhon Ratchasima'],['Study','Grade 11/10 · AI Programme'],['Focus','AI · IoT · Innovation']]; $('#profile-meta').innerHTML=meta.map(([label,value])=>`<span><small>${label}</small>${value}</span>`).join(''); const contact=portfolio.profile.contact; const links=[['GitHub',contact.github,'<i class="devicon-github-original" aria-hidden="true"></i>'],['Instagram',contact.instagram,'◎'],['Facebook',contact.facebook,'f'],['Discord',contact.discord,'◈'],['Email',`mailto:${contact.email}`,'✉']]; $('#socials').innerHTML=links.map(([name,href,icon])=>`<a class="social-icon" href="${esc(href)}" title="${name}" aria-label="${name}" ${href.startsWith('http')?'target="_blank" rel="noreferrer"':''}>${icon}</a>`).join(''); }
-const skillIcon = key => { const dev={python:'devicon-python-plain colored',javascript:'devicon-javascript-plain colored',c:'devicon-c-plain colored',jupyter:'devicon-jupyter-plain colored',opencv:'devicon-opencv-plain colored'}; const svg={vision:'<svg viewBox="0 0 24 24"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>',detect:'<svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg>',classify:'<svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg>',edge:'<svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 2v5m3-5v5m3-5v5M9 17v5m3-5v5m3-5v5M2 9h5m-5 3h5m-5 3h5m10-6h5m-5 3h5m-5 3h5"/></svg>',rag:'<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="m7.5 7.5 3 8m6-8-3 8M8 6h8"/></svg>',hardware:'<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m3-4v4m3-4v4M9 18v4m3-4v4m3-4v4M2 9h4m-4 3h4m-4 3h4m12-6h4m-4 3h4m-4 3h4"/></svg>',research:'<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v7l-4 7a3 3 0 0 0 2.6 4h6.8a3 3 0 0 0 2.6-4l-4-7V3"/><path d="M8 16h8"/></svg>',lead:'<svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM4 21c.5-4 3.1-6 8-6s7.5 2 8 6"/><path d="m18 4 1 2 2 .2-1.5 1.5.4 2.1L18 8.7l-1.9 1.1.4-2.1L15 6.2l2-.2 1-2Z"/></svg>'}; if(key==='web')return '<span class="tech-icon dual" aria-hidden="true"><i class="devicon-html5-plain colored"></i><i class="devicon-css3-plain colored"></i></span>'; if(dev[key])return `<i class="tech-icon ${dev[key]}" aria-hidden="true"></i>`; return `<span class="tech-icon" aria-hidden="true">${svg[key]}</span>`; };
-function renderSkills() { const groups=language==='th'?[['AI และ Computer Vision',[['vision','Computer Vision'],['detect','Object Detection'],['classify','Image Classification'],['classify','Decision Tree AI'],['edge','Edge AI']]],['การเขียนโปรแกรม',[['python','Python'],['javascript','JavaScript'],['web','HTML / CSS'],['c','C language']]],['การสร้างและวิจัย',[['rag','RAG Chatbot'],['hardware','IoT / Hardware'],['research','Research'],['lead','Project Lead & Pitch']]]]:[['AI & computer vision',[['vision','Computer vision'],['detect','Object detection'],['classify','Image classification'],['classify','Decision Tree AI'],['edge','Edge AI']]],['Programming',[['python','Python'],['javascript','JavaScript'],['web','HTML / CSS'],['c','C language']]],['Making & research',[['rag','RAG chatbot'],['hardware','IoT / hardware'],['research','Research'],['lead','Project lead & pitch']]]]; $('#skills-grid').innerHTML=groups.map(([group,items])=>`<article class="skill-group"><h3>${group}</h3><div class="skill-chips">${items.map(([icon,label])=>`<span class="skill-chip">${skillIcon(icon)}${esc(label)}</span>`).join('')}</div></article>`).join(''); }
-function renderTimeline(entries) { const byId=new Map(entries.map(entry=>[entry.id,entry])); const copy=language==='th'?['ช่วงเวลาสำคัญ','เส้นทางที่ผมได้ลงมือทำ','ภาพและวันเข้าร่วมที่ตรวจสอบจากเอกสารและไฟล์โครงงานแล้ว']:['Selected dates','The work behind the portfolio','A visual record of participation dates verified from project files and documents.']; $('#timeline-kicker').textContent=copy[0]; $('#timeline-title').textContent=copy[1]; $('#timeline-intro').textContent=copy[2]; $('#timeline-list').innerHTML=portfolio.timeline.map(item=>{const entry=byId.get(item.entryId); if(!entry||!eventDate(entry))return ''; return `<li class="timeline-item"><img src="${esc(item.image)}" alt=""><div class="timeline-copy"><time class="timeline-date">${esc(eventDate(entry))}</time><h3>${esc(entry.title)}</h3><p>${esc(entry.summary)}</p></div></li>`}).join(''); }
-function renderSections() { const entries=all(); const projectEntries=entries.filter(e=>e.id!=='grow-a-garden-science'); const achievementEntries=entries.filter(e=>portfolio.achievements.some(x=>x.id===e.id)&&!e.showcase).sort((a,b)=>a.id==='depa-2025-national'?-1:b.id==='depa-2025-national'?1:0); $('#projects-grid').innerHTML=projectEntries.map(e=>card(e,'project')).join(''); $('#achievements-grid').innerHTML=achievementEntries.map(e=>card(e,'achievement')).join(''); renderTimeline(entries); $('#gallery-grid').innerHTML=portfolio.gallery.map((item,i)=>{const [title,caption]=language==='th'?thGallery[i]:[item.title,item.caption];return `<button class="memory" data-lightbox-src="${esc(item.src)}" data-lightbox-alt="${esc(title)}"><img src="${esc(item.src)}" alt="${esc(title)}"><span><strong>${esc(title)}</strong><br>${esc(caption)}</span></button>`}).join(''); renderSkills(); bindEntries(); bindLightboxes(); }
-function renderContact() { const contact=portfolio.profile.contact; const copy=language==='th'?['ข้อมูลติดต่อ','ติดต่อผมได้สำหรับโครงงาน กิจกรรม หรือโอกาสด้านการศึกษา']:['Contact details','Use these channels for projects, activities, or education opportunities.']; $('#contact-title').textContent=copy[0]; $('#contact-context').textContent=copy[1]; const phoneLabel=language==='th'?'โทรศัพท์':'Phone'; const cards=[[t().email,contact.email,`mailto:${contact.email}`,'✉'],[phoneLabel,contact.phone,`tel:${contact.phone}`,'◌'],['GitHub','tanth123-h',contact.github,'◉'],['Instagram','@no_thing.we1',contact.instagram,'◎'],['Facebook','Open profile',contact.facebook,'f'],['Discord','Tankhun',contact.discord,'◈']]; $('#contact-grid').innerHTML=cards.map(([label,value,href,icon])=>`<a class="contact-card" href="${esc(href)}" ${href.startsWith('http')?'target="_blank" rel="noreferrer"':''}><span class="contact-icon">${icon}</span><span><small>${label}</small><strong>${esc(value)}</strong></span></a>`).join(''); }
-function applyLanguage() { document.documentElement.lang=language==='th'?'th':'en'; $$('[data-label]').forEach(n=>n.textContent=t()[n.dataset.label]); $$('[data-text]').forEach(n=>n.textContent=t()[n.dataset.text]); const about=language==='th'?['ผมชื่อแทนคุณ เป็นนักเรียนแผนการเรียน AI โรงเรียนมารีย์วิทยา นครราชสีมา สนใจงานคอมพิวเตอร์วิทัศน์ ต้นแบบฮาร์ดแวร์ งานวิจัย และการนำเสนอให้เข้าใจง่าย','ผมสนใจโครงงานที่เริ่มจากปัญหาใกล้ตัว เช่น ความปลอดภัยออนไลน์ เกษตรอัจฉริยะ หรือการสื่อสารไอเดียให้ชัดเจน นอกห้องเรียนผมเรียนรู้ผ่านการแข่งขัน ฮาร์ดแวร์ และการทำงานเป็นทีม','']:['I am Tankhun, an AI-programme student at Maryvit Nakhon Ratchasima. I focus on computer vision, hardware prototypes, research, and clear presentations.','I enjoy projects that start with nearby problems: online safety, smart agriculture, or making an idea easy to understand. Outside class, I learn through competitions, hardware, and teamwork.','']; $('#about-one').textContent=about[0]; $('#about-two').textContent=about[1]; $('#about-three').textContent=about[2]; $('[data-copy="projects"]').textContent=t().viewProjects; $('[data-copy="about"]').textContent=t().aboutMe; $('#about-facts').innerHTML=t().facts.map(x=>`<span>${x}</span>`).join(''); $('#language-toggle').textContent=language==='en'?'TH':'EN'; $('#language-toggle').setAttribute('aria-label',language==='en'?'Switch to Thai':'Switch to English'); renderProfile(); renderSections(); renderContact(); }
-function close(dialog) { dialog.close(); priorFocus?.focus(); }
-function imageGrid(items) { return `<div class="media-images">${items.map(a=>`<button class="media-image" data-lightbox-src="${esc(a.src)}" data-lightbox-alt="${esc(a.alt||a.title)}"><img src="${esc(a.src)}" alt="${esc(a.alt||a.title)}"><span>${esc(a.title)}</span></button>`).join('')}</div>`; }
-function pdfs(items) { return items.map(a=>`<div><iframe class="pdf-viewer" title="${esc(a.title)}" src="${esc(a.src)}"></iframe><div class="file-actions"><a href="${esc(a.src)}" target="_blank" rel="noreferrer">${t().openPdf}</a><a href="${esc(a.src)}" download>${t().downloadPdf}</a></div></div>`).join(''); }
-function videos(items) { return items.map(a=>`<div><video controls preload="metadata"><source src="${esc(a.src)}">${t().noVideo}</video><div class="file-actions"><a href="${esc(a.src)}" target="_blank" rel="noreferrer">${t().openVideo}</a><a href="${esc(a.src)}" download>${t().downloadVideo}</a></div></div>`).join(''); }
-function overview(e) { const fallback=language==='th'?'เรียนรู้จากกระบวนการและพัฒนาการนำเสนอ':'Learning through the process and improving the presentation.'; return `<div class="detail-grid"><div><strong>${t().problem}</strong>${esc(e.problem||e.summary)}</div><div><strong>${t().did}</strong>${esc(e.whatIDid)}</div><div><strong>${t().challenge}</strong>${esc(e.challenge||fallback)}</div><div><strong>${t().learned}</strong>${esc(e.whatILearned)}</div></div>${tags(e.skills)}${e.note?`<p class="contact-note">${t().note}: ${esc(e.note)}</p>`:''}${Object.entries(e.links||{}).map(([label,url])=>`<a class="text-link" href="${esc(url)}" target="_blank" rel="noreferrer">${esc(label)}</a>`).join(' · ')}`; }
-function renderMedia(e,group) { if(group==='overview')return overview(e); const items=e.media[group]||[]; return group==='pdfs'?pdfs(items):group==='videos'?videos(items):imageGrid(items); }
-function openEntry(e,trigger) { priorFocus=trigger; const d=$('#portfolio-dialog'), groups=Object.entries(e.media).filter(([,x])=>x.length); d.innerHTML=`<div class="dialog-body"><div class="dialog-top"><div><p class="kicker">${esc(e.type)}</p><h2 id="dialog-title">${esc(e.title)}</h2><p class="dialog-summary">${esc(e.summary)}</p></div><button class="close" data-close aria-label="${t().closeDetails}">×</button></div><div class="media-tabs" role="tablist"><button class="media-tab" role="tab" aria-selected="true" data-tab="overview">${t().overview}</button>${groups.map(([g])=>`<button class="media-tab" role="tab" aria-selected="false" data-tab="${g}">${t()[g]}</button>`).join('')}</div><div class="media-panel" id="media-panel">${overview(e)}</div></div>`; d.showModal(); $('[data-close]',d).focus(); $$('[data-tab]',d).forEach(b=>b.addEventListener('click',()=>{$$('[data-tab]',d).forEach(x=>x.setAttribute('aria-selected',String(x===b))); $('#media-panel',d).innerHTML=renderMedia(e,b.dataset.tab); bindLightboxes(d);})); $('[data-close]',d).addEventListener('click',()=>close(d)); d.addEventListener('click',x=>{if(x.target===d)close(d)},{once:true}); bindLightboxes(d); }
-function lightbox(src,alt,trigger) { priorFocus=trigger; const d=$('#lightbox'); d.innerHTML=`<div class="lightbox-content"><button class="close" data-close aria-label="${t().closeImage}">×</button><img src="${esc(src)}" alt="${esc(alt)}"></div>`; d.showModal(); $('[data-close]',d).focus(); $('[data-close]',d).addEventListener('click',()=>close(d)); d.addEventListener('click',x=>{if(x.target===d)close(d)},{once:true}); }
-function bindLightboxes(root=document) { $$('[data-lightbox-src]',root).forEach(b=>b.addEventListener('click',()=>lightbox(b.dataset.lightboxSrc,b.dataset.lightboxAlt,b))); }
-function bindEntries() { $$('[data-entry]').forEach(trigger=>{const open=()=>openEntry(all().find(e=>e.id===trigger.dataset.entry),trigger); trigger.addEventListener('click',open); trigger.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});}); }
-function bindInteractions() { $('.nav-toggle').addEventListener('click',e=>{const links=$('#nav-links'),open=links.classList.toggle('open');e.currentTarget.setAttribute('aria-expanded',String(open));}); $('#language-toggle').addEventListener('click',()=>{language=language==='en'?'th':'en';applyLanguage();}); $$('#nav-links a').forEach(link=>link.addEventListener('click',()=>{$('#nav-links').classList.remove('open');$('.nav-toggle').setAttribute('aria-expanded','false');})); }
-bindInteractions(); applyLanguage();
+function image(item, cover = false) {
+  return (
+    '<img lang="en" src="' +
+    optimized(item.src) +
+    '" srcset="' +
+    optimized(item.src) +
+    " 640w, " +
+    optimized(item.src, 1200) +
+    ' 1200w" sizes="' +
+    (cover
+      ? "(max-width:760px) 100vw, 560px"
+      : "(max-width:480px) 100vw, 420px") +
+    '" width="1200" height="800" loading="lazy" decoding="async" alt="' +
+    escape(item.alt || item.title) +
+    '">'
+  );
+}
+function card(raw, award = false, index = 0) {
+  const entry = local(raw);
+  const featured =
+    raw.media.graphics[0] ||
+    raw.media.photos[0] ||
+    raw.media.certificateImages[0];
+  const poster =
+    raw.media.graphics.includes(featured) ||
+    raw.media.certificateImages.includes(featured);
+  const role = award
+    ? ""
+    : '<p class="card-role"><strong>' +
+      copy().role +
+      "</strong>" +
+      escape(entry.whatIDid) +
+      '</p><div class="detail-skills">' +
+      entry.skills
+        .slice(0, 3)
+        .map((label) => "<span>" + icon(label) + escape(label) + "</span>")
+        .join("") +
+      "</div>";
+  return (
+    '<article class="' +
+    (award ? "award-card" : "project-card") +
+    '" id="entry-' +
+    raw.id +
+    '"><div class="cover' +
+    (poster ? " poster" : "") +
+    '">' +
+    image(featured, true) +
+    '</div><div class="card-body"><p class="eyebrow">' +
+    escape(entry.type) +
+    "</p><h3>" +
+    escape(entry.title) +
+    "</h3>" +
+    (date(entry) ? '<p class="date">' + escape(date(entry)) + "</p>" : "") +
+    "<p>" +
+    escape(entry.summary) +
+    "</p>" +
+    (entry.outcome
+      ? '<p class="outcome">' + escape(entry.outcome) + "</p>"
+      : "") +
+    role +
+    '<div class="card-bottom"><button class="story-button" type="button" data-entry="' +
+    entry.id +
+    '" aria-label="' +
+    escape((award ? copy().details : copy().open) + ": " + entry.title) +
+    '">' +
+    (award ? copy().details : copy().open) +
+    ' <span aria-hidden="true">↗</span></button><span class="entry-number" aria-hidden="true">' +
+    String(index + 1).padStart(2, "0") +
+    "</span></div></div></article>"
+  );
+}
+function renderSkills() {
+  const groups = [
+    [
+      copy().ai,
+      [
+        "OpenCV",
+        "Object detection",
+        "Image classification",
+        "Decision Tree AI",
+        "Edge AI",
+        "RAG chatbot",
+      ],
+    ],
+    [
+      copy().code,
+      ["Python", "Jupyter Notebook", "HTML", "CSS", "JavaScript", "C"],
+    ],
+    [
+      copy().make,
+      [
+        "Arduino",
+        "IoT / hardware",
+        "Research",
+        "Project leadership",
+        "Pitching",
+      ],
+    ],
+  ];
+  $("#skills-grid").innerHTML = groups
+    .map(
+      ([title, items]) =>
+        '<div class="skill-group"><h4>' +
+        title +
+        '</h4><div class="skill-list">' +
+        items
+          .map(
+            (label) =>
+              '<span class="skill-chip">' +
+              icon(label) +
+              escape(label) +
+              "</span>",
+          )
+          .join("") +
+        "</div></div>",
+    )
+    .join("");
+}
+function renderContact() {
+  const contact = portfolio.profile.contact;
+  const links = [
+    ["GitHub", contact.github, "github"],
+    ["Instagram", contact.instagram, "instagram"],
+    ["Facebook", contact.facebook, "facebook"],
+    ["Discord", contact.discord, "discord"],
+    [copy().phone, "tel:" + contact.phone, "phone"],
+  ];
+  $("#contact-links").innerHTML = links
+    .map(
+      ([label, url, name]) =>
+        '<a href="' +
+        escape(url) +
+        '" ' +
+        (url.startsWith("http") ? external : "") +
+        '><img class="icon" src="./public/assets/icons/' +
+        name +
+        '.svg" alt="" width="20" height="20">' +
+        escape(label) +
+        "</a>",
+    )
+    .join("");
+}
+function render() {
+  document.documentElement.lang = language;
+  document.querySelectorAll("[data-text]").forEach((node) => {
+    node.textContent = copy()[node.dataset.text];
+  });
+  $("#language-toggle").textContent = language === "en" ? "TH" : "EN";
+  $("#language-toggle").setAttribute(
+    "aria-label",
+    language === "en" ? "Switch to Thai" : "Switch to English",
+  );
+  $("#projects-grid").innerHTML = portfolio.projects
+    .map((entry, index) => card(entry, false, index))
+    .join("");
+  const order = [
+    "grow-a-garden-science",
+    "depa-2026-third-place",
+    "youth-bronze",
+    "idektep-honorable-mention",
+    "depa-2025-national",
+    "tira-iot-training",
+    "minister-exhibition",
+  ];
+  $("#achievements-grid").innerHTML = order
+    .map((id, index) =>
+      card(
+        portfolio.achievements.find((entry) => entry.id === id),
+        true,
+        index,
+      ),
+    )
+    .join("");
+  renderSkills();
+  renderContact();
+}
+const returnFocus = new WeakMap();
+function show(dialog, trigger) {
+  returnFocus.set(dialog, trigger);
+  dialog.showModal();
+  ($("[data-close]", dialog) || dialog).focus();
+}
+function overview(entry) {
+  const fields = [
+    ["problem", "problem"],
+    ["role", "whatIDid"],
+    ["approach", "approach"],
+    ["challenge", "challenge"],
+    ["learned", "whatILearned"],
+    ["outcome", "outcome"],
+  ];
+  return (
+    '<div class="detail-grid">' +
+    fields
+      .filter(([, field]) => entry[field])
+      .map(
+        ([label, field]) =>
+          '<section class="detail-block"><h3>' +
+          copy()[label] +
+          "</h3><p>" +
+          escape(entry[field]) +
+          "</p></section>",
+      )
+      .join("") +
+    '</div><div class="detail-skills">' +
+    entry.skills
+      .map((label) => "<span>" + icon(label) + escape(label) + "</span>")
+      .join("") +
+    '</div><div class="detail-links">' +
+    Object.entries(entry.links || {})
+      .map(
+        ([label, url]) =>
+          '<a href="' +
+          escape(url) +
+          '" ' +
+          external +
+          ">" +
+          escape(label === "github" ? copy().source : copy().publication) +
+          " ↗</a>",
+      )
+      .join("") +
+    "</div>"
+  );
+}
+function media(entry, group) {
+  if (group === "overview") return overview(entry);
+  const items = entry.media[group] || [];
+  if (group === "pdfs")
+    return items
+      .map(
+        (item) =>
+          '<div class="file-row"><h3 lang="en">' +
+          escape(item.title) +
+          '</h3><div class="file-actions"><a href="' +
+          escape(item.src) +
+          '" ' +
+          external +
+          ">" +
+          copy().openFile +
+          ' ↗</a><a href="' +
+          escape(item.src) +
+          '" download>' +
+          copy().download +
+          "</a></div></div>",
+      )
+      .join("");
+  if (group === "videos")
+    return items
+      .map(
+        (item) =>
+          '<div class="video-block"><h3 lang="en">' +
+          escape(item.title) +
+          "</h3><p>" +
+          copy().videoNote +
+          '</p><video lang="en" controls preload="none" aria-label="' +
+          escape(item.title) +
+          '" src="' +
+          escape(item.src) +
+          '"></video><div class="file-actions"><a href="' +
+          escape(item.src) +
+          '" download>' +
+          copy().download +
+          "</a></div></div>",
+      )
+      .join("");
+  return (
+    '<div class="media-images">' +
+    items
+      .map(
+        (item) =>
+          '<button type="button" lang="en" class="media-image" data-image="' +
+          escape(item.src) +
+          '" data-alt="' +
+          escape(item.alt || item.title) +
+          '">' +
+          image(item) +
+          "<span>" +
+          escape(item.title) +
+          " ↗</span></button>",
+      )
+      .join("") +
+    "</div>"
+  );
+}
+let activeEntry;
+function openEntry(id, trigger) {
+  const raw = entries.find((entry) => entry.id === id);
+  if (!raw) return;
+  activeEntry = local(raw);
+  const entry = activeEntry;
+  const dialog = $("#portfolio-dialog");
+  const groups = [
+    "overview",
+    ...Object.keys(entry.media).filter((key) => entry.media[key].length),
+  ];
+  dialog.innerHTML =
+    '<div class="dialog-top"><div><p class="eyebrow">' +
+    escape(entry.type) +
+    '</p><h2 id="dialog-title">' +
+    escape(entry.title) +
+    '</h2><p class="dialog-summary">' +
+    escape(entry.summary) +
+    '</p><p class="date">' +
+    escape(date(entry) || copy().dateUnknown) +
+    "</p>" +
+    (entry.id.includes("depa-2026") || entry.id === "agri"
+      ? '<p class="date">' + copy().dateContext + "</p>"
+      : "") +
+    '</div><button class="close-button" type="button" data-close aria-label="' +
+    copy().close +
+    '">×</button></div><div class="media-controls" aria-label="' +
+    copy().details +
+    '">' +
+    groups
+      .map(
+        (group) =>
+          '<button type="button" data-group="' +
+          group +
+          '" aria-controls="media-panel" aria-pressed="' +
+          (group === "overview") +
+          '">' +
+          copy()[group] +
+          "</button>",
+      )
+      .join("") +
+    '</div><div class="media-panel" id="media-panel">' +
+    overview(entry) +
+    "</div>";
+  show(dialog, trigger);
+}
+function openImage(trigger) {
+  const dialog = $("#lightbox");
+  dialog.setAttribute("aria-label", trigger.dataset.alt);
+  dialog.innerHTML =
+    '<div class="lightbox-head"><a href="' +
+    escape(trigger.dataset.image) +
+    '" download>' +
+    copy().download +
+    '</a><button type="button" class="close-button" data-close aria-label="' +
+    copy().close +
+    '">×</button></div><img src="' +
+    escape(trigger.dataset.image) +
+    '" alt="' +
+    escape(trigger.dataset.alt) +
+    '">';
+  show(dialog, trigger);
+}
+for (const dialog of document.querySelectorAll("dialog")) {
+  dialog.addEventListener("close", () => {
+    dialog.querySelectorAll("video").forEach((video) => video.pause());
+    returnFocus.get(dialog)?.focus();
+  });
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) {
+      const rect = dialog.getBoundingClientRect();
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      )
+        dialog.close();
+    }
+  });
+}
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("button");
+  if (!trigger) return;
+  if (trigger.dataset.entry) openEntry(trigger.dataset.entry, trigger);
+  if (trigger.hasAttribute("data-close")) trigger.closest("dialog").close();
+  if (trigger.dataset.image) openImage(trigger);
+  if (trigger.dataset.group) {
+    const dialog = trigger.closest("dialog");
+    dialog.querySelectorAll("video").forEach((video) => video.pause());
+    dialog
+      .querySelectorAll("[data-group]")
+      .forEach((button) =>
+        button.setAttribute("aria-pressed", String(button === trigger)),
+      );
+    $("#media-panel").innerHTML = media(activeEntry, trigger.dataset.group);
+    dialog.scrollTop = 0;
+  }
+});
+function closeMenu() {
+  $("#nav-links").classList.remove("open");
+  $(".nav-toggle").setAttribute("aria-expanded", "false");
+}
+$(".nav-toggle").addEventListener("click", () => {
+  const open = $("#nav-links").classList.toggle("open");
+  $(".nav-toggle").setAttribute("aria-expanded", String(open));
+});
+$("#nav-links").addEventListener("click", (event) => {
+  if (event.target.closest("a")) closeMenu();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && $("#nav-links").classList.contains("open")) {
+    closeMenu();
+    $(".nav-toggle").focus();
+  }
+});
+$("#language-toggle").addEventListener("click", () => {
+  language = language === "en" ? "th" : "en";
+  render();
+});
+render();
