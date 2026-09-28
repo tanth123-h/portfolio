@@ -201,6 +201,29 @@ export const portfolio = {
       media: media({ photos: [asset('./public/assets/photos/youth-innovation-event.jpg', 'Youth Innovation event', 'Youth Innovation activity')], certificateImages: [asset('./public/assets/certificates/youth-innovation-final-bronze-certificate.png', 'Bronze certificate', 'Youth Innovation Bronze certificate')], pdfs: [asset('./public/assets/pdfs/youth-innovation-research.pdf', 'Research document', 'Youth research PDF')], videos: [], graphics: [] }),
     },
     {
+      id: 'grow-a-garden-science', title: 'Grow a Garden: Science Project Extension', type: 'School-network science competition',
+      date: '19 September 2026', dateTh: '19 กันยายน 2569',
+      summary: 'Extended Grow a Garden into a science project in the invention category for a private-school network competition, earning Gold and first place.',
+      problem: 'A working innovation can become stronger when its design, testing, evidence, and explanation are developed as a science project.',
+      whatIDid: 'Extended Grow a Garden beyond innovation competitions, prepared the invention project for school-network science competition, explained the system and demonstrated the prototype with the team.',
+      challenge: 'Learn a new competition format: explain the project as a scientific invention with evidence, not only as an innovation idea.',
+      whatILearned: 'This was my first science-project competition. I learned to turn an innovation into a more structured scientific project, connect the prototype to evidence, and communicate the process clearly.',
+      skills: ['Science project', 'Software development', 'Hardware prototyping', 'Project presentation', 'Teamwork'], links: {},
+      media: media({
+        photos: [
+          asset('./public/assets/photos/grow-a-garden-science/01-presentation.jpg', 'Science project presentation', 'Presenting Grow a Garden science project'),
+          asset('./public/assets/photos/grow-a-garden-science/02-team-and-exhibit.jpg', 'Team and exhibit', 'Grow a Garden science project team'),
+          asset('./public/assets/photos/grow-a-garden-science/03-presentation-wide.jpg', 'Presentation day', 'Grow a Garden science project presentation'),
+          asset('./public/assets/photos/grow-a-garden-science/04-project-display.jpg', 'Project display', 'Grow a Garden science project display'),
+          asset('./public/assets/photos/grow-a-garden-science/05-team-display.jpg', 'Team beside project', 'Grow a Garden science project team'),
+          asset('./public/assets/photos/grow-a-garden-science/06-project-demo.jpg', 'Prototype demonstration', 'Demonstrating Grow a Garden prototype'),
+          asset('./public/assets/photos/grow-a-garden-science/07-project-explanation.jpg', 'Explaining the project', 'Explaining Grow a Garden science project'),
+        ],
+        certificateImages: [asset('./public/assets/certificates/grow-a-garden-science-gold.jpg', 'Gold first-place certificate', 'Gold first-place Grow a Garden science project certificate')],
+        pdfs: [], videos: [], graphics: [],
+      }),
+    },
+    {
       id: 'idektep-honorable-mention', showcase: true, title: 'iDektep Coding: Python for AI Challenge 2026', type: 'AI workshop and competition',
       date: '14–15 March 2026', dateTh: '14–15 มีนาคม 2569',
       summary: 'A two-day Python for AI programme: object-detection workshop on day one, competition on day two, earning an honorable mention.', problem: 'Object-detection models need a structured workflow for data, training, testing, and evaluation.', whatIDid: 'Learned object-detection model training through Jupyter Notebook on workshop day, then applied the workflow in the next-day competition.', challenge: 'Move from guided notebook training to a competition task with limited time.',
@@ -241,6 +264,7 @@ export const portfolio = {
     { entryId: 'cityflowbkk', image: './public/assets/graphics/cityflowbkk-poster-4.png' },
     { entryId: 'youth-innovation', image: './public/assets/photos/youth-innovation-event.jpg' },
     { entryId: 'agri', image: './public/assets/photos/depa-2026-event-1.jpg' },
+    { entryId: 'grow-a-garden-science', image: './public/assets/certificates/grow-a-garden-science-gold.jpg' },
   ],
   gallery: [
     { src: './public/assets/photos/depa-2026-event-3.jpg', title: 'Building at depa 2026', caption: 'A competition moment behind the Agri project.' },
