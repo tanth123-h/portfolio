@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "build": "node --check site-data.js && node --check content.js && node --check app.js"
+    "build": "node --check site-data.js && node --check content.js && node --check catalog.js && node --check pdf-viewer.js && node --check app.js"
   }
 }

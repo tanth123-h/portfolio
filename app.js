@@ -1,5 +1,6 @@
 import { portfolio } from "./site-data.js?v=20260928";
 import { ui, thEntries } from "./content.js?v=20260928";
+import { catalog } from "./catalog.js?v=20260928";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 let language = "en";
@@ -12,7 +13,7 @@ const escape = (value = "") =>
         char
       ],
   );
-const entries = [...portfolio.projects, ...portfolio.achievements];
+const entries = [...catalog.competitions, ...catalog.activities];
 const local = (entry) =>
   language === "th" ? { ...entry, ...thEntries[entry.id] } : entry;
 const optimized = (src, width = 640) =>
@@ -139,9 +140,7 @@ function card(raw, award = false, index = 0) {
     escape((award ? copy().details : copy().open) + ": " + entry.title) +
     '">' +
     (award ? copy().details : copy().open) +
-    ' <span aria-hidden="true">↗</span></button><span class="entry-number" aria-hidden="true">' +
-    String(index + 1).padStart(2, "0") +
-    "</span></div></div></article>"
+    ' <span aria-hidden="true">↗</span></button></div></div></article>'
   );
 }
 function renderSkills() {
@@ -225,26 +224,11 @@ function render() {
     "aria-label",
     language === "en" ? "Switch to Thai" : "Switch to English",
   );
-  $("#projects-grid").innerHTML = portfolio.projects
+  $("#projects-grid").innerHTML = catalog.competitions
     .map((entry, index) => card(entry, false, index))
     .join("");
-  const order = [
-    "grow-a-garden-science",
-    "depa-2026-third-place",
-    "youth-bronze",
-    "idektep-honorable-mention",
-    "depa-2025-national",
-    "tira-iot-training",
-    "minister-exhibition",
-  ];
-  $("#achievements-grid").innerHTML = order
-    .map((id, index) =>
-      card(
-        portfolio.achievements.find((entry) => entry.id === id),
-        true,
-        index,
-      ),
-    )
+  $("#achievements-grid").innerHTML = catalog.activities
+    .map(entry => card(entry, true))
     .join("");
   renderSkills();
   renderContact();
@@ -316,7 +300,7 @@ function media(entry, group) {
           escape(item.src) +
           '" download>' +
           copy().download +
-          "</a></div></div>",
+          '</a></div></div><div class="pdf-preview" data-pdf="' + escape(item.src) + '"></div>',
       )
       .join("");
   if (group === "videos")
@@ -327,10 +311,10 @@ function media(entry, group) {
           escape(item.title) +
           "</h3><p>" +
           copy().videoNote +
-          '</p><video lang="en" controls preload="none" aria-label="' +
+          '</p><video lang="en" controls playsinline preload="metadata" aria-label="' +
           escape(item.title) +
           '" src="' +
-          escape(item.src) +
+          escape(item.src.replace('/videos/', '/video-web/')) +
           '"></video><div class="file-actions"><a href="' +
           escape(item.src) +
           '" download>' +
@@ -453,6 +437,12 @@ document.addEventListener("click", (event) => {
         button.setAttribute("aria-pressed", String(button === trigger)),
       );
     $("#media-panel").innerHTML = media(activeEntry, trigger.dataset.group);
+    if (trigger.dataset.group === 'pdfs') {
+      const readers = [...document.querySelectorAll('[data-pdf]')];
+      import('./pdf-viewer.js').then(({mountReader}) => readers.forEach(root => {
+        if (root.isConnected) mountReader(root, language);
+      })).catch(() => readers.forEach(root => { root.textContent = copy().openFile + ' ↗'; }));
+    }
     dialog.scrollTop = 0;
   }
 });

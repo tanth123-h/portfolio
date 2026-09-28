@@ -1,8 +1,8 @@
 export const ui = {
   en: {
     home: "Home",
-    projects: "Work",
-    achievements: "Awards & activities",
+    projects: "Competitions",
+    achievements: "Activities",
     about: "About",
     skills: "Skills",
     contact: "Contact",
@@ -17,12 +17,12 @@ export const ui = {
     observe: "Understand the problem",
     build: "Build & connect",
     test: "Test & explain",
-    workTitle: "Work, with context.",
+    workTitle: "Competitions & projects",
     workIntro:
       "Five team projects across agriculture, heritage, mobility, online safety, and health research.",
-    awardsTitle: "Learning beyond the classroom.",
+    awardsTitle: "Training & exhibitions",
     awardsIntro:
-      "Competitions, workshops, and exhibitions. Each entry includes its own photographs or supporting documents.",
+      "Learning outside competitions, with photographs and supporting documents.",
     aboutTitle: "A student who learns by building.",
     aboutOne:
       "I study in the AI programme at Maryvit, Nakhon Ratchasima. My interests connect computer vision, research, and physical prototypes.",
@@ -61,7 +61,7 @@ export const ui = {
     top: "Back to top",
     email: "Email",
     phone: "Phone",
-    videoNote: "Original video. Large file; loads only when you press play.",
+    videoNote: "Play here, or download the original below.",
     empty: "No media in this category.",
     skip: "Skip to content",
     ai: "AI & computer vision",
@@ -70,8 +70,8 @@ export const ui = {
   },
   th: {
     home: "หน้าแรก",
-    projects: "ผลงาน",
-    achievements: "รางวัลและกิจกรรม",
+    projects: "การแข่งขัน",
+    achievements: "กิจกรรม",
     about: "เกี่ยวกับผม",
     skills: "ทักษะ",
     contact: "ติดต่อ",
@@ -86,12 +86,12 @@ export const ui = {
     observe: "ทำความเข้าใจปัญหา",
     build: "สร้างและเชื่อมต่อ",
     test: "ทดสอบและอธิบาย",
-    workTitle: "ผลงานและเรื่องราวเบื้องหลัง",
+    workTitle: "การแข่งขันและโครงงาน",
     workIntro:
       "โครงงานทีม 5 ชิ้น ครอบคลุมเกษตร มรดกทางวัฒนธรรม การเดินทาง ความปลอดภัยออนไลน์ และแนวคิดวิจัยสุขภาพ",
-    awardsTitle: "เรียนรู้ผ่านการลงมือทำ",
+    awardsTitle: "อบรมและนิทรรศการ",
     awardsIntro:
-      "การแข่งขัน เวิร์กช็อป และนิทรรศการ พร้อมภาพกิจกรรมหรือเอกสารของแต่ละรายการ",
+      "การเรียนรู้นอกการแข่งขัน พร้อมภาพกิจกรรมและเอกสารของแต่ละรายการ",
     aboutTitle: "นักเรียนที่เรียนรู้ผ่านการสร้าง",
     aboutOne:
       "ผมเรียนแผนการเรียน AI โรงเรียนมารีย์วิทยา นครราชสีมา สนใจการเชื่อมงาน Computer Vision งานวิจัย และต้นแบบฮาร์ดแวร์เข้าด้วยกัน",
@@ -130,7 +130,7 @@ export const ui = {
     top: "กลับด้านบน",
     email: "อีเมล",
     phone: "โทรศัพท์",
-    videoNote: "วิดีโอต้นฉบับ ไฟล์ขนาดใหญ่ เริ่มโหลดเมื่อกดเล่น",
+    videoNote: "เล่นวิดีโอได้ที่นี่ หรือดาวน์โหลดต้นฉบับด้านล่าง",
     empty: "ไม่มีสื่อในหมวดนี้",
     skip: "ข้ามไปเนื้อหา",
     ai: "AI และ Computer Vision",

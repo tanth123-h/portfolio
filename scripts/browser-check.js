@@ -5,8 +5,8 @@ async page => {
   const results = [];
   try {
     await page.reload();
-    if (await page.locator('#projects-grid article').count() !== 5) throw new Error('Project count is not five');
-    if (await page.locator('#achievements-grid article').count() !== 7) throw new Error('Activity count is not seven');
+    if (await page.locator('#projects-grid article').count() !== 8) throw new Error('Competition count is not eight');
+    if (await page.locator('#achievements-grid article').count() !== 2) throw new Error('Activity count is not two');
     if (await page.locator('#timeline').count()) throw new Error('Timeline still rendered');
     for (const language of ['en','th']) {
       if (await page.locator('html').getAttribute('lang') !== language) await page.locator('#language-toggle').click();
@@ -50,6 +50,6 @@ async page => {
     await page.emulateMedia({reducedMotion:'reduce'});
     if (await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior) !== 'auto') throw new Error('Reduced motion not respected');
     if(errors.length) throw new Error(errors.join('; '));
-    return {results,projects:5,activities:7,keyboard:'passed in both languages',images:'all homepage images decoded',consoleErrors:errors};
+    return {results,competitions:8,activities:2,keyboard:'passed in both languages',images:'all homepage images decoded',consoleErrors:errors};
   } finally {page.off('pageerror',onError);}
 }
