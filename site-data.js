@@ -187,10 +187,10 @@ export const portfolio = {
   ],
   achievements: [
     {
-      id: 'depa-2026-third-place', title: 'depa 2026: Regional Bronze Award', type: 'Regional competition award',
+      id: 'depa-2026-third-place', title: 'depa 2026: Regional Bronze · National Round Qualifier', type: 'Regional award and national-round qualification',
       date: '21–23 August 2026', dateTh: '21–23 สิงหาคม 2569',
-      summary: 'Won a Bronze award in the regional round with Grow a Garden.', whatIDid: 'Presented Grow a Garden with the team at the regional competition.',
-      whatILearned: 'Judges respond to evidence, clarity, and a solution linked to a real need.', skills: ['Presentation', 'AI agriculture'], links: {},
+      summary: 'Won a Bronze award in the regional round with Grow a Garden and advanced to the national round.', whatIDid: 'Presented Grow a Garden with the team at the regional competition and prepared the project for national-level competition.',
+      whatILearned: 'Judges respond to evidence, clarity, and a solution linked to a real need. Advancing nationally also required stronger testing and presentation preparation.', skills: ['Presentation', 'AI agriculture', 'National round qualifier'], links: {},
       media: media({ photos: [asset('./public/assets/photos/depa-2026-event-2.jpg', 'depa event', 'depa 2026 event'), asset('./public/assets/graphics/depa-2026-poster.jpg', 'Grow a Garden poster', 'Grow a Garden poster')], certificateImages: [asset('./public/assets/certificates/depa-2026-coding-ai-certificate.png', 'Coding Thailand 2026 certificate', 'Coding Thailand 2026 certificate')], pdfs: [asset('./public/assets/pdfs/grow-a-garden-features.pdf', 'Grow a Garden feature graphic', 'Grow a Garden graphic PDF'), asset('./public/assets/pdfs/grow-a-garden-poster.pdf', 'Grow a Garden poster', 'Grow a Garden poster PDF')], videos: [], graphics: [] }),
     },
     {
