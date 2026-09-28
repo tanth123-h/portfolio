@@ -24,6 +24,19 @@ body{background:linear-gradient(180deg,#ddf8ff 0 13%,#72ddeb 24%,#0b7894 40%,#04
   </main>
   <footer class="footer shell"><span data-text="footer"></span><a href="#home" data-text="backTop"></a></footer>
   <dialog id="portfolio-dialog" class="detail-dialog" aria-labelledby="dialog-title"></dialog><dialog id="lightbox" class="lightbox" aria-label="Expanded image"></dialog>
-  <style>.socials{align-items:center;gap:10px;font-size:1.1rem}.social-icon{display:grid!important;width:34px;height:34px;place-items:center;border:1px solid rgba(6,48,71,.35);border-radius:50%;color:#063047!important;text-decoration:none!important;background:rgba(244,252,255,.28);transition:transform .2s ease,background .2s ease}.social-icon:hover,.social-icon:focus-visible{transform:translateY(-2px);background:rgba(244,252,255,.7)}.social-icon i{font-size:1rem}.social-icon[aria-label="Instagram"]{font-size:1.2rem}.social-icon[aria-label="Facebook"]{font-weight:800;font-family:Arial,sans-serif}.social-icon[aria-label="Discord"]{font-size:1rem}</style>
+  <style>.socials{align-items:center;gap:10px;font-size:1.1rem}.social-icon{display:grid!important;width:34px;height:34px;place-items:center;border:1px solid rgba(6,48,71,.35);border-radius:50%;color:#063047!important;text-decoration:none!important;background:rgba(244,252,255,.28);transition:transform .2s ease,background .2s ease}.social-icon:hover,.social-icon:focus-visible{transform:translateY(-2px);background:rgba(244,252,255,.7)}.social-icon i{font-size:1rem}.social-icon[aria-label="Instagram"]{font-size:1.2rem}.social-icon[aria-label="Facebook"]{font-weight:800;font-family:Arial,sans-serif}.social-icon[aria-label="Discord"]{font-size:1rem}.hero-copy h1{font-size:clamp(3.4rem,7vw,6.6rem)}.hero-copy h1 small{font-size:clamp(1.05rem,2.2vw,1.8rem)}#timeline{display:none!important}.surface-portrait{display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#7fe8ed 0 8%,#0d7894 9% 50%,#032b40 51% 100%);border:12px solid rgba(225,252,255,.72);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 34px 60px rgba(5,80,111,.24)}.surface-portrait .portrait{display:none}.surface-portrait::before{width:74%;height:74%;border:2px solid rgba(208,250,255,.72);border-radius:50%;box-shadow:0 0 0 12px rgba(2,43,64,.35),0 0 0 18px rgba(208,250,255,.2);content:""}.surface-portrait::after{position:absolute;display:block!important;color:#e8fcff;content:"AI   •   IoT   •   BUILD";font-size:.72rem;font-weight:800;letter-spacing:.18em;text-shadow:0 2px 12px #032b40;transform:translateY(145px)}</style>
+  <style>
+    #timeline{display:none!important}
+    .hero-copy h1{font-size:clamp(2.9rem,5.4vw,5.2rem)!important}
+    .hero-copy h1 small{font-size:clamp(1rem,1.8vw,1.55rem)!important}
+    .achievements-section .achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:1100px}
+    .achievements-section .achievement-grid::before{display:none}
+    .achievements-section .achievement-card,.achievements-section .achievement-card:nth-child(even){display:block;margin:0;padding:22px;border:1px solid rgba(169,236,245,.28);border-radius:24px;background:rgba(1,23,34,.2)}
+    .achievements-section .achievement-card .badge{position:static;display:inline-grid;margin-bottom:14px;width:15px;height:15px}
+    .achievements-section .achievement-card .entry-type,.achievements-section .achievement-card h3,.achievements-section .achievement-card p,.achievements-section .achievement-card .card-footer,.achievements-section .achievement-card .achievement-detail{display:block;grid-column:auto}
+    .achievements-section .achievement-card h3{margin:7px 0 10px;font-size:1.3rem}
+    .achievements-section .achievement-card .card-footer{margin-top:18px}
+    @media(max-width:700px){.achievements-section .achievement-grid{grid-template-columns:1fr}.achievements-section .achievement-card,.achievements-section .achievement-card:nth-child(even){padding:18px}}
+  </style>
   <script type="module" src="./app.js"></script>
 </body></html>
