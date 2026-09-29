@@ -1,4 +1,4 @@
-import { portfolio } from './site-data.js?v=20260928';
+import { portfolio } from './site-data.js?v=20260929-content';
 
 const all = [...portfolio.projects, ...portfolio.achievements];
 const find = id => all.find(entry => entry.id === id);

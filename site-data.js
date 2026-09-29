@@ -17,7 +17,7 @@ const asset = (src, title, alt) => ({ src, title, alt });
 export const portfolio = {
   profile: {
     nameTh: "นายแทนคุณ ศรีจันทร์แก้ว",
-    nameEn: "Tankhun Srichankaew",
+    nameEn: "Tankhun Srijankaew",
     title: "Student · AI Builder · Creator",
     school: "Maryvit Nakhon Ratchasima",
     schoolUrl: "https://www.mrv.ac.th/",
@@ -41,19 +41,19 @@ export const portfolio = {
       title: "Grow a Garden: Smart Farm Planner",
       type: "AI agriculture",
       summary:
-        "A Flutter prototype for mapping farm boundaries, calculating area, and planning planting spacing, within a broader AI and IoT farming project.",
+        "A working Flutter farming prototype that combines field mapping, soil monitoring, weather information, and AI-assisted farm planning.",
       approach:
-        "The repository documents Flutter field-planning screens and Supabase persistence. Soil, weather, and AI recommendations belong to the wider project scope; not all are confirmed shipped features.",
-      outcome: "Regional Bronze · depa 2026 national-round qualifier",
+        "Built with Flutter and Supabase, with MQTT sensor integration, stored soil readings, and weather information from Open-Meteo. Gemini supports farm analysis and recommendations alongside a rule-based recommendation engine. These features are implemented in the current project; they are not merely future plans.",
+      outcome: "Bronze, Central Isan regional round · National final 210 teams · No national award",
       problem:
         "Farmers need clearer data to select suitable crops, plan fields, monitor soil, and manage costs.",
       whatIDid:
-        "Led project direction and pitching, developed software, and supported hardware work for the team’s data-driven farm-planning concept and mobile application story.",
+        "Led project direction and pitching, developed the farm-planning software, and contributed to connecting the application with the team’s sensor hardware.",
       challenge:
         "Combining soil, weather, crop, cost, and market data into recommendations that are easy for farmers to understand.",
       whatILearned:
-        "Agriculture technology is strongest when complex field data becomes a useful, practical decision.",
-      skills: ["Flutter", "IoT", "Field planning"],
+        "I learned to build Flutter screens, store and retrieve farm data with Supabase, and connect sensor readings to the application through MQTT. Integrating weather data and Gemini helped me understand how to supply farm context to AI, distinguish calculated recommendations from generated explanations, and handle missing data or connection failures.",
+      skills: ["Flutter", "Supabase", "MQTT", "AI", "IoT"],
       links: { github: "https://github.com/tanth123-h/argi" },
       media: media({
         photos: [
@@ -151,18 +151,18 @@ export const portfolio = {
       title: "PhishWall AI",
       type: "Cybersecurity",
       summary:
-        "An Edge AI concept exploring phishing detection and understandable warnings, with privacy and response speed as design goals.",
+        "After attending the AI & Cyber Security workshop, our team had seven days to prepare a phishing-detection proposal and presentation video. We submitted both but did not qualify for the next round. The project has since developed into a working prototype.",
       approach:
-        "The presentation proposes a multi-layer detection approach. A demonstration video is available, but detection benchmarks and a public implementation have not been verified.",
-      outcome: "Competition concept · demonstration available",
+        "The competition submission was a proposal for a multi-layer detection workflow. A working prototype is now available according to the project owner, alongside a demonstration video. No public source repository or measured detection benchmark is available; specific model and deployment claims are therefore not asserted.",
+      outcome: "Workshop and proposal submission · Did not qualify for the next round",
       problem:
         "New phishing pages can evade blacklist-only protection and put personal data at risk.",
       whatIDid:
-        "Led the team project direction and pitch, developed software, supported hardware work, and prepared the AI analysis approach and presentation materials.",
+        "Attended the workshop, led the project direction, and prepared the proposal and presentation video with the team within the seven-day submission period. The software prototype was developed beyond that competition submission.",
       challenge:
         "Balancing detection quality, privacy, and a fast user experience on-device.",
       whatILearned:
-        "Cybersecurity tools must make protection understandable and practical for everyday users.",
+        "I learned to turn workshop material into a structured cybersecurity proposal, define a detection workflow, and explain the idea in a presentation video within seven days. Developing the prototype further helped me connect the proposed workflow to software, while keeping performance claims separate from what the demonstration actually proves.",
       skills: [
         "Team leadership",
         "Pitching",
@@ -203,24 +203,24 @@ export const portfolio = {
       title: "TropoSense",
       type: "Health innovation concept",
       summary:
-        "A research concept exploring a repurposed glucose meter, cTnI testing, OCR, and TropoBot as a possible screening-support workflow.",
+        "A research concept exploring a repurposed glucose meter, cTnI testing, OCR, and TropoBot as a possible screening-support workflow. The national final is scheduled for 24 October 2026; I have not attended that round yet.",
       approach:
         "The proposal explores reading test results with OCR and communicating information through TropoBot. This is not a clinically validated or approved medical device, and is not a substitute for diagnosis.",
-      outcome: "Research concept · proposal and pitch available",
+      outcome: "Second runner-up · Selection-round Gold · National final scheduled 24 October 2026, not yet attended",
       problem:
         "Early cardiac screening can be slow and difficult to access before a patient reaches specialist care.",
       whatIDid:
-        "Led the project story and pitch, built software components, supported hardware prototyping, and prepared the proposal and competition media with my team.",
+        "Served as project lead, coordinated the team, wrote the project documentation, designed the video scenes, and recorded the voice-over explaining the concept.",
       challenge:
         "Explain a medical innovation clearly while keeping its role accurate: early screening support, not medical diagnosis.",
       whatILearned:
-        "A strong health innovation needs careful evidence, responsible boundaries, and a clear path from prototype data to action.",
+        "I learned to organise a team around a shared research concept and turn technical material into structured project documentation. Designing video scenes and recording the narration taught me to explain the proposed measurement, OCR, and TropoBot workflow clearly, while distinguishing research goals from clinically validated results.",
       skills: [
-        "Innovation design",
-        "AI OCR",
-        "Hardware prototyping",
-        "Software development",
-        "Pitching",
+        "Project leadership",
+        "Technical writing",
+        "Research",
+        "Video planning",
+        "Voice-over",
       ],
       links: {},
       media: media({
@@ -288,7 +288,7 @@ export const portfolio = {
       challenge:
         "Connect real-time people detection, data tools, and visitor information into one understandable heritage platform.",
       whatILearned:
-        "AIoT systems become more useful when detection data, staff decisions, and visitor experience work together.",
+        "I learned to connect RTSP camera streams to YOLOv8 people detection, expose results through FastAPI, and use visitor records and LINE alerts in an operational workflow. The project also developed my understanding of retrieval-based heritage information and my ability to explain an AIoT architecture and research findings in English.",
       skills: ["YOLOv8", "FastAPI", "RAG chatbot"],
       links: {
         github: "https://github.com/tanth123-h/phimai",
@@ -374,7 +374,7 @@ export const portfolio = {
       challenge:
         "Turn a city problem into a working, presentable prototype under a fast three-day deadline.",
       whatILearned:
-        "Rapid prototyping works when the team makes focused choices, tests early, and keeps the user problem visible.",
+        "I learned to build Android interfaces with Kotlin and Jetpack Compose and separate screens, application state, and data access using MVVM. Working with route graphs, fare calculations, maps, and place information taught me to connect multiple data sources into one travel workflow while prioritising a demonstrable prototype within three days.",
       skills: ["Kotlin", "Jetpack Compose", "Prototyping"],
       links: { github: "https://github.com/tanth123-h/CityFlowBKK.git" },
       media: media({
@@ -422,16 +422,16 @@ export const portfolio = {
   achievements: [
     {
       id: "depa-2026-third-place",
-      title: "depa 2026: Regional Bronze · National Round Qualifier",
+      title: "depa 2026: Central Isan Bronze · National Final 210 Teams",
       type: "Regional award and national-round qualification",
       date: "21–23 August 2026",
       dateTh: "21–23 สิงหาคม 2569",
       summary:
-        "Won a Bronze award in the regional round with Grow a Garden and advanced to the national round.",
+        "Won Bronze in the Central Isan regional round with Grow a Garden, then competed among the national final 210 teams on 21–23 August 2026. The team did not receive a national-round award.",
       whatIDid:
-        "Presented Grow a Garden with the team at the regional competition and prepared the project for national-level competition.",
+        "Led the project and presentation, developed software, and contributed to hardware integration for Grow a Garden across the regional and national competition stages.",
       whatILearned:
-        "Judges respond to evidence, clarity, and a solution linked to a real need. Advancing nationally also required stronger testing and presentation preparation.",
+        "I practised demonstrating the farm application and sensor system together, explaining how data supports recommendations, and answering questions about the prototype. Preparing for the national round helped me prioritise improvements and organise technical evidence for the presentation.",
       skills: ["Presentation", "AI agriculture", "National round qualifier"],
       links: {},
       media: media({
@@ -481,7 +481,7 @@ export const portfolio = {
       whatIDid:
         "Led the Heritage AI project direction, pitch, software work, and hardware support with the team.",
       whatILearned:
-        "English pitching improves through preparation, practice, and deep knowledge of both the research and prototype.",
+        "I practised presenting an AIoT research project in English: introducing the problem, explaining camera-based visitor counting and the heritage-information workflow, and connecting the technical design to its intended users. Preparing the pitch helped me organise the research and describe each component clearly.",
       skills: ["English pitching", "AIoT", "Team leadership"],
       links: {},
       media: media({
@@ -512,6 +512,7 @@ export const portfolio = {
     },
     {
       id: "grow-a-garden-science",
+      outcome: "Gold · First place · Upper-secondary invention category",
       title: "Grow a Garden: Science Project Gold Award",
       type: "Private-school network science competition",
       date: "19 September 2026",
@@ -586,13 +587,14 @@ export const portfolio = {
     },
     {
       id: "idektep-honorable-mention",
+      outcome: "Honorable mention · Upper-secondary team category",
       showcase: true,
       title: "iDektep Coding: Python for AI Challenge 2026",
       type: "AI workshop and competition",
       date: "14–15 March 2026",
       dateTh: "14–15 มีนาคม 2569",
       summary:
-        "A two-day Python for AI programme: object-detection workshop on day one, competition on day two, earning an honorable mention.",
+        "A two-day Python for AI programme at Suranaree University of Technology: a workshop on 14 March and a competition on 15 March 2026. Our team received an honorable mention in the upper-secondary category.",
       problem:
         "Object-detection models need a structured workflow for data, training, testing, and evaluation.",
       whatIDid:
@@ -600,7 +602,7 @@ export const portfolio = {
       challenge:
         "Move from guided notebook training to a competition task with limited time.",
       whatILearned:
-        "I learned object detection, model training, and how Jupyter Notebook supports a clear train-test-improve workflow.",
+        "I learned to use Python in Jupyter Notebook to run an object-detection training workflow, inspect predictions, and review model results. Applying that workflow in the next-day competition helped me connect the training steps to a practical task and work with teammates under a time limit.",
       skills: [
         "Python",
         "Jupyter Notebook",
@@ -662,19 +664,20 @@ export const portfolio = {
     },
     {
       id: "tira-iot-training",
+      outcome: "30-hour participation certificate · Online and onsite training",
       showcase: true,
       title: "TIRA Arduino IoT Training",
       type: "Hands-on technical training",
       date: "14, 15, 22 June and 20–21 September 2025",
       dateTh: "14, 15, 22 มิถุนายน และ 20–21 กันยายน 2568",
       summary:
-        "A 30-hour smart-electronics pre-engineering programme with TIRA: online sessions in June and hands-on sessions in Nakhon Ratchasima in September 2025.",
+        "Participated in a 30-hour pilot of TIRA’s smart-electronics pre-engineering curriculum, organised with the Ministry of Education’s educational technology development fund. Online sessions took place on 14, 15 and 22 June 2025, followed by onsite sessions in Nakhon Ratchasima on 20–21 September.",
       whatIDid:
         "Worked through practical Arduino and IoT activities, connecting electronics, sensors, and software while testing how each part affects the system.",
       challenge:
         "Debugging physical systems requires checking code, wiring, power, sensors, and output behavior step by step.",
       whatILearned:
-        "Reliable physical computing comes from testing every connection, observing system behavior, and improving one issue at a time.",
+        "I learned to connect Arduino code with circuits and sensor readings, then test whether the physical output matched the program. I practised checking wiring, power, sensor behaviour, and software separately to locate faults in an IoT system.",
       skills: ["Arduino", "IoT", "Hardware", "Sensors", "Debugging"],
       links: {},
       media: media({
@@ -729,6 +732,9 @@ export const portfolio = {
     },
     {
       id: "minister-exhibition",
+      date: "5 June 2026",
+      dateTh: "5 มิถุนายน 2569",
+      outcome: "School representative · Innovation exhibition",
       showcase: true,
       title: "Hairline Detector: Maryvit School Representative",
       type: "School innovation exhibition",
@@ -739,7 +745,7 @@ export const portfolio = {
       challenge:
         "Presenting an AI-based school project to visitors with different technical backgrounds while keeping the explanation accurate and clear.",
       whatILearned:
-        "A strong public presentation connects technical work to a simple real-world purpose and adapts to each audience.",
+        "I practised demonstrating an AI vision project to visitors, explaining its purpose and operation without assuming technical knowledge, and answering questions about the prototype. This strengthened my ability to organise a live demonstration and adapt explanations to different audiences.",
       skills: [
         "Public communication",
         "Exhibition presentation",
@@ -778,14 +784,15 @@ export const portfolio = {
     },
     {
       id: "depa-2025-national",
-      title: "depa 2025: National Round",
+      outcome: "Qualified for and participated in the national round · Coding Thailand 2025",
+      title: "depa 2025: Weed-Detection and Spot-Spraying Vehicle",
       type: "National competition round",
       summary:
-        "Advanced to the national round of the depa competition, supported by event photos and recognition material.",
+        "Developed a vehicle designed to detect weeds and target spraying only where needed, with the aim of reducing chemical use. The project reached the national round of depa’s Coding Thailand 2025: AI-Driven Future. The participation certificate was issued on 5 October 2025.",
       whatIDid:
         "Led most of the software and hardware work, then helped prepare and present the team project at national-round level.",
       whatILearned:
-        "National competition preparation needs stronger evidence, clearer storytelling, and closer teamwork.",
+        "By handling most of the software and hardware, I learned to trace problems across code, wiring, and device behaviour instead of testing each part in isolation. I also practised integrating the team’s prototype, preparing a working demonstration, and explaining technical decisions during a national-level presentation.",
       skills: [
         "Software development",
         "Hardware prototyping",

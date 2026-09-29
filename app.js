@@ -1,6 +1,6 @@
-import { portfolio } from "./site-data.js?v=20260928";
-import { ui, thEntries } from "./content.js?v=20260928";
-import { catalog } from "./catalog.js?v=20260928";
+import { portfolio } from "./site-data.js?v=20260929-content";
+import { ui, thEntries } from "./content.js?v=20260929-content";
+import { catalog } from "./catalog.js?v=20260929-content";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 let language = "en";
