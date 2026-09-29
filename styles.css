@@ -396,6 +396,8 @@ button:focus-visible,
   font-size: 0.76rem !important;
   font-weight: 650;
 }
+.outcome strong { display: block; font-size: .68rem; margin-bottom: 4px; }
+.card-body .outcome { padding: 12px 14px; border-left: 2px solid var(--accent); background: #ffffff06; width: 100%; }
 .card-role {
   font-size: 0.83rem !important;
   padding-top: 16px;
@@ -1063,6 +1065,14 @@ body:has(dialog[open]) .ocean-particles { visibility: hidden; }
   margin: 16px 0 32px;
 }
 .pdf-preview canvas { display: block; width: 100%; height: auto; background: white; }
+.pdf-scroll { overflow: auto; max-height: 65vh; }
+.pdf-scroll canvas { max-width: none; }
+.pdf-preview:fullscreen { padding: 16px; overflow: auto; margin: 0; }
+.pdf-preview:fullscreen .pdf-scroll { max-height: calc(100dvh - 170px); }
+.pdf-zoom { justify-content: flex-start; border-top: 1px solid var(--line); }
+.pdf-zoom button { min-width: 44px; }
+.pdf-zoom span { margin-left: auto; }
+#achievements { border-top: 1px solid #8bdfdf25; border-radius: 50% 50% 0 0 / 22px 22px 0 0; }
 .pdf-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; flex-wrap: wrap; }
 .pdf-controls button { background: var(--ink); border: 1px solid var(--line); border-radius: 6px; min-height: 44px; padding: 8px; }
 .pdf-controls button:disabled { opacity: .45; }

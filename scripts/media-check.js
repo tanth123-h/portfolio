@@ -14,7 +14,7 @@ async page => {
     results.push({id,...result});
     await page.locator('[data-group=pdfs]').click();
     await page.waitForFunction(() => [...document.querySelectorAll('.pdf-controls [role=status]')].some(el => el.textContent.includes(' / ')));
-    const next = page.locator('.pdf-controls button').last();
+    const next = page.locator('[data-page=next]').last();
     if (await next.isEnabled()) {
       await next.click();
       await page.waitForFunction(() => [...document.querySelectorAll('.pdf-controls [role=status]')].some(el => el.textContent.includes('2 / ')));

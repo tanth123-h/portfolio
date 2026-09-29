@@ -75,6 +75,7 @@ function icon(label) {
   );
 }
 function image(item, cover = false) {
+  if (item.src.includes('/previews/')) return '<img src="' + escape(item.src) + '" alt="' + escape(item.alt) + '" width="1280" height="720" loading="lazy" decoding="async">';
   return (
     '<img lang="en" src="' +
     optimized(item.src) +
@@ -94,10 +95,14 @@ function image(item, cover = false) {
 function card(raw, award = false, index = 0) {
   const entry = local(raw);
   const featured =
+    (raw.id === 'phishwall-ai' ? {src:'./public/assets/previews/phishwall-demo.jpg', alt:'PhishWall demonstration interface'} : null) ||
+    (raw.id === 'troposense' ? {src:'./public/assets/previews/troposense-pitch.jpg', alt:'TropoSense presentation video frame'} : null) ||
+    (raw.id === 'agri' ? raw.media.photos.find(item => item.src.includes('agri-app-screen')) : null) ||
     raw.media.graphics[0] ||
     raw.media.photos[0] ||
     raw.media.certificateImages[0];
   const poster =
+    raw.id === 'agri' || featured.src.includes('/previews/') ||
     raw.media.graphics.includes(featured) ||
     raw.media.certificateImages.includes(featured);
   const role = award
@@ -126,14 +131,11 @@ function card(raw, award = false, index = 0) {
     "</p><h3>" +
     escape(entry.title) +
     "</h3>" +
-    (date(entry) ? '<p class="date">' + escape(date(entry)) + "</p>" : "") +
-    "<p>" +
-    escape(entry.summary) +
-    "</p>" +
+    '<p class="date">' + escape(date(entry) || copy().dateUnknown) + '</p>' +
     (entry.outcome
-      ? '<p class="outcome">' + escape(entry.outcome) + "</p>"
+      ? '<p class="outcome"><strong>' + copy().outcome + '</strong> ' + escape(entry.outcome) + "</p>"
       : "") +
-    role +
+    role + '<p>' + escape(entry.summary) + '</p>' +
     '<div class="card-bottom"><button class="story-button" type="button" data-entry="' +
     entry.id +
     '" aria-label="' +
@@ -311,7 +313,7 @@ function media(entry, group) {
           escape(item.title) +
           "</h3><p>" +
           copy().videoNote +
-          '</p><video lang="en" controls playsinline preload="metadata" aria-label="' +
+          '</p><video lang="en" controls playsinline preload="none" poster="' + escape(item.src.replace('/videos/', '/previews/').replace('.mp4', '.jpg')) + '" aria-label="' +
           escape(item.title) +
           '" src="' +
           escape(item.src.replace('/videos/', '/video-web/')) +
@@ -439,7 +441,7 @@ document.addEventListener("click", (event) => {
     $("#media-panel").innerHTML = media(activeEntry, trigger.dataset.group);
     if (trigger.dataset.group === 'pdfs') {
       const readers = [...document.querySelectorAll('[data-pdf]')];
-      import('./pdf-viewer.js').then(({mountReader}) => readers.forEach(root => {
+      import('./pdf-viewer.js?v=20260929-media').then(({mountReader}) => readers.forEach(root => {
         if (root.isConnected) mountReader(root, language);
       })).catch(() => readers.forEach(root => { root.textContent = copy().openFile + ' ↗'; }));
     }
