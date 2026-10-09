@@ -2,6 +2,8 @@
 
 ## Latest motion correction — 9 October 2026
 
+Latest approved polish: constrain the display/bar/Bit within the monitor; at 100%, stop walking and wave for 650ms before expanding into the homepage (approximately 2.7 seconds total). Sky/Mint/Dusk now color the intro. Verify late-stage and completed-state inner bounds, not just page overflow. Keep the existing self-cleaning island click ripple. Correct the depa 2026 award card to use its depa event photo; the school science image remains a separate school entry and project prototype illustration. Added event-cover regression coverage and `scripts/pixel-boot-polish-check.js` for these behaviors.
+
 Approved loading-screen follow-up: restored smooth motion while retaining pixel artwork. Power-up now shows Bit walking across a 0–100% intro progress bar, followed by a brief completed state and monitor expansion; total approximately 2.2 seconds. This percentage represents the intro, not asset downloads. Skip/Escape cancel animation frames and timers. Added a real-browser check for visible progress, movement, reaching 100% before exit and mobile layout. This supersedes the stepped-motion description below.
 
 At the user's explicit request, animations now default on independently of the browser's reduced-motion signal. Homepage and Settings switches use the same persistent explicit preference; Off disables all animation and startup. Removed the temporary Preview control. Power-up runs on every animated root-page load, with immediate skip and deep-link bypass. Water, scene details, gaze transitions and opening windows now use stepped pixel motion.

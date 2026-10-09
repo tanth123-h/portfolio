@@ -35,7 +35,11 @@ export const optimized = (src, w = 640) =>
   "-" +
   w +
   ".webp";
-export function cover(raw) {
+export function cover(raw, kind = "projects") {
+  if (raw.id === "agri" && kind === "achievements")
+    return raw.media.photos.find((item) =>
+      item.src.endsWith("depa-2026-event-2.jpg"),
+    );
   if (raw.id === "youth-innovation")
     return raw.media.photos.find((item) =>
       item.src.endsWith("youth-innovation-2.png"),
@@ -130,7 +134,7 @@ export function display(raw, kind = "projects") {
 export function fileCard(raw, kind = "projects") {
   const item = display(raw, kind);
   const labels = kind === "projects" ? projectLabels(raw.id) : [];
-  return `<a class="file-card" href="${routeFor(raw.id, kind)}" data-route><div class="file-cover">${image(cover(raw))}</div><div>${labels.length ? `<div class="project-labels">${labels.map((p) => `<span class="project-label ${p.tone}">${e(p[language])}</span>`).join("")}</div>` : ""}<p class="file-type">${e(item.type)}</p><h3>${e(item.title)}</h3><p class="date">${["agri", "depa-2026-third-place"].includes(raw.id) ? (language === "th" ? "รอบประเทศ: " : "National round: ") : ""}${e(date(item))}</p><p class="file-result">${e(item.outcome || item.summary)}</p><p class="file-role"><strong>${copy().role}</strong> ${e(local(raw).whatIDid)}</p><span class="file-open">${copy().open} ↗</span></div></a>`;
+  return `<a class="file-card" href="${routeFor(raw.id, kind)}" data-route><div class="file-cover">${image(cover(raw, kind))}</div><div>${labels.length ? `<div class="project-labels">${labels.map((p) => `<span class="project-label ${p.tone}">${e(p[language])}</span>`).join("")}</div>` : ""}<p class="file-type">${e(item.type)}</p><h3>${e(item.title)}</h3><p class="date">${["agri", "depa-2026-third-place"].includes(raw.id) ? (language === "th" ? "รอบประเทศ: " : "National round: ") : ""}${e(date(item))}</p><p class="file-result">${e(item.outcome || item.summary)}</p><p class="file-role"><strong>${copy().role}</strong> ${e(local(raw).whatIDid)}</p><span class="file-open">${copy().open} ↗</span></div></a>`;
 }
 export function projectLabels(id) {
   const label = (en, th, tone = "stage") => ({ en, th, tone });

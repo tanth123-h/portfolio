@@ -390,9 +390,13 @@ button svg {
   transform: translateX(-50%);
 }
 .boot-display {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   height: 150px;
   color: var(--mint);
-  background: var(--blue);
+  background: var(--boot-color, var(--blue));
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -403,6 +407,7 @@ button svg {
   animation: power-up 700ms ease-out both;
 }
 .boot-track {
+  flex-shrink: 0;
   position: relative;
   height: 64px;
   width: calc(100% - 64px);
@@ -431,6 +436,11 @@ button svg {
   animation: boot-walk-arm 720ms ease-in-out infinite alternate;
 }
 #boot-progress {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
   height: 12px;
   background: var(--ink);
   border: 2px solid var(--paper);
@@ -449,6 +459,28 @@ button svg {
     monospace;
   color: var(--paper);
   font-variant-numeric: tabular-nums;
+}
+[data-wallpaper="sky"] {
+  --boot-color: #3359d9;
+  --boot-fill: #b5dbbd;
+}
+[data-wallpaper="mint"] {
+  --boot-color: #326752;
+  --boot-fill: #b5dbbd;
+}
+[data-wallpaper="dusk"] {
+  --boot-color: #514a7e;
+  --boot-fill: #c9c3ef;
+}
+.boot-fill {
+  background: var(--boot-fill, var(--mint));
+}
+.boot-ready .boot-walker svg,
+.boot-ready .boot-walker :is(.buddy-foot-left, .buddy-foot-right) {
+  animation: none;
+}
+.boot-ready .boot-walker .buddy-arm {
+  animation: buddy-wave 600ms ease-in-out both;
 }
 @keyframes boot-walk-bob {
   50% {

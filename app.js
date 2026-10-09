@@ -66,7 +66,7 @@ function dismissBoot(animate = false) {
     bootTimer = setTimeout(() => dismissBoot(), 450);
     return;
   }
-  $("#boot-screen").classList.remove("boot-leaving");
+  $("#boot-screen").classList.remove("boot-leaving", "boot-ready");
   if ($("#boot-screen").open) $("#boot-screen").close();
 }
 function startBoot(replay = false) {
@@ -82,6 +82,7 @@ function startBoot(replay = false) {
   clearTimeout(bootTimer);
   cancelAnimationFrame(bootFrame);
   bootTrigger = document.activeElement;
+  $("#boot-screen").classList.remove("boot-ready", "boot-leaving");
   $("#boot-title").textContent = text(
     "Starting your desktop…",
     "กำลังเปิดโลกเล็ก ๆ ของผม…",
@@ -110,11 +111,12 @@ function startBoot(replay = false) {
     $("#boot-percent").textContent = `${percent}%`;
     if (fraction < 1) bootFrame = requestAnimationFrame(advance);
     else {
+      $("#boot-screen").classList.add("boot-ready");
       $("#boot-title").textContent = text(
         "Ready. Hello, world!",
         "พร้อมแล้ว สวัสดีครับ!",
       );
-      bootTimer = setTimeout(() => dismissBoot(true), 150);
+      bootTimer = setTimeout(() => dismissBoot(true), 650);
     }
   };
   bootFrame = requestAnimationFrame(advance);
@@ -123,7 +125,7 @@ $("#boot-skip").addEventListener("click", () => dismissBoot());
 $("#boot-screen").addEventListener("close", () => {
   clearTimeout(bootTimer);
   cancelAnimationFrame(bootFrame);
-  $("#boot-screen").classList.remove("boot-leaving");
+  $("#boot-screen").classList.remove("boot-leaving", "boot-ready");
   const target =
     bootTrigger?.isConnected && bootTrigger !== document.body
       ? bootTrigger

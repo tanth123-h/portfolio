@@ -50,6 +50,18 @@ test("project labels distinguish awards, qualification and later prototypes", ()
   );
   assert.deepEqual(projectLabels("missing"), []);
 });
+test("depa award cover uses its event, not the school science competition", () => {
+  const grow = projects.find((p) => p.id === "agri");
+  assert.ok(cover(grow, "achievements").src.endsWith("depa-2026-event-2.jpg"));
+  assert.ok(
+    view
+      .fileCard(grow, "achievements")
+      .includes("photos-depa-2026-event-2-jpg-640.webp"),
+  );
+  assert.ok(
+    !view.fileCard(grow, "achievements").includes("grow-a-garden-science"),
+  );
+});
 test("contact sheet exposes each real photo with its original viewer target", () => {
   const { contactSheet } = view;
   assert.equal(
