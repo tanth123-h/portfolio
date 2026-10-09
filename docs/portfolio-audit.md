@@ -1,5 +1,13 @@
 # Portfolio audit and redesign — 28 September 2026
 
+## Latest motion correction — 9 October 2026
+
+Approved loading-screen follow-up: restored smooth motion while retaining pixel artwork. Power-up now shows Bit walking across a 0–100% intro progress bar, followed by a brief completed state and monitor expansion; total approximately 2.2 seconds. This percentage represents the intro, not asset downloads. Skip/Escape cancel animation frames and timers. Added a real-browser check for visible progress, movement, reaching 100% before exit and mobile layout. This supersedes the stepped-motion description below.
+
+At the user's explicit request, animations now default on independently of the browser's reduced-motion signal. Homepage and Settings switches use the same persistent explicit preference; Off disables all animation and startup. Removed the temporary Preview control. Power-up runs on every animated root-page load, with immediate skip and deep-link bypass. Water, scene details, gaze transitions and opening windows now use stepped pixel motion.
+
+Verification: the new `scripts/pixel-default-check.js` passes with browser reduced motion enabled, including startup, actual cursor tracking, both switches, persistence, replay, five viewport widths and a direct project URL. All 26 Node tests and build syntax checks pass. Earlier entries below are historical; their OS-priority/once-per-session/Preview behavior is superseded. Figma synchronization remains pending because its Starter tool quota blocked this turn's call. No push or deployment.
+
 ## Repository findings
 
 The site is vanilla HTML, CSS and ES modules. It has no framework or runtime dependencies. `site-data.js` stores English content/media; Thai content and interface copy were embedded in `app.js`. Vercel serves the repository as static files. `npm run build` is a syntax check, not a bundle or framework build.
@@ -83,3 +91,45 @@ The TIRA certificate was visually checked during implementation. It records 30 h
 The unused Orion PDF remains in the asset library; its project mapping is not inferred.
 
 Independent code review found no blocking issues. English media captions/accessible names now have language markup. iDektep intentionally retains its competition poster as the cover, matching the owner's specific request; event photographs remain in its media browser.
+
+## PIXEL//OS update — 9 October 2026
+
+This section supersedes the historical visual/architecture notes above. The implementation remains static HTML/CSS/ES modules, now with seven functional desktop apps, original SVG pixel art, bounded pointer dragging, focus stacking, minimize/restore/maximize, a launcher/taskbar/clock, persistent preferences and fullscreen mobile apps. Project and experience details are full pages rather than story dialogs. Native image dialogs and the lazy PDF reader are retained.
+
+Content corrections: owner name is Tankhun Srijankaew; school is Marie Vithaya School, Nakhon Ratchasima; class is Mathayom 5/10 in the AI programme. depa 2025 is the CiRA Core weed-detection vehicle with servo-controlled spot spraying, national qualification and participation. depa 2026 is Central Isan regional Bronze plus national qualification among 210 teams, with no national award; 21–23 August is the national date, not the unconfirmed regional date. PhishWall includes workshop attendance, seven-day proposal/video submission and failure to qualify; its subsequent working prototype is owner-confirmed, without published source/benchmarks. TropoSense's 24 October final remains future, not attended.
+
+Six project files include the depa 2025 vehicle. Ten experience files comprise eight competition records and two non-competition activities. The Gold science-project award remains tied to Grow a Garden, with the original certificate and photographs. Heritage AI cover now uses the real live-camera prototype screenshot; its screenshot captions identify dashboards, camera detection, visitor pages, code and LINE alerts rather than incorrectly calling them event photographs.
+
+Verification: fifteen Node tests pass; build syntax checks pass. Browser checks pass English/Thai at 320, 375, 430, 768, 1024, 1280, 1440 and 1920 pixels without horizontal overflow. Window controls, bounded dragging, all apps, persistent preferences, reduced motion, image viewing and mobile fullscreen panels pass. All six project and ten experience routes load directly; project refresh, keyboard activation, browser back/forward, mobile app switching and desktop resize restoration pass. All case-cover images decode. Missing-media requests return 404, not the HTML shell. Both demo videos play at 1280px with real poster frames; mobile PDF rendering/zoom, pagination and fullscreen pass. No JavaScript page errors occurred. PDF.js emits one non-blocking TrueType font warning for an existing document. These checks are not a complete accessibility certification.
+
+Figma board `5:2` contains the editable PIXEL//OS palette and typography direction, not a full screen mockup. Website previews are under ignored `output/playwright`. No production push/deployment was performed in this redesign task. Vercel route rewrites were prepared but are not yet tested against a deployed build.
+
+Still unknown: actual depa 2025 participation dates; depa 2026 regional dates; exact PhishWall attendance dates; TropoSense selection-round participation date; confirmed production domain; quantitative performance measurements. Certificate-issue dates are not substituted for attendance dates. Original assets and unmapped Orion PDF are preserved.
+
+### PIXEL//OS polish — 9 October 2026
+
+The follow-up keeps the existing pixel palette, type and window chrome. Project covers now use a consistent 16:9 frame and separate bilingual award/stage/prototype labels. PhishWall explicitly separates its later working prototype from its non-qualifying proposal; TropoSense remains a research concept with a selection-stage award, not a completed national-final result.
+
+Memories opens with a three-column desktop / two-column mobile contact sheet across all nine photo albums. Selecting a frame opens the original image; closing it restores keyboard focus. The optional single-photo browser remains available below the sheet.
+
+Desktop window position, dimensions and maximized state persist in local browser storage. Restored geometry is validated and bounded to the current workspace; mobile panels remain fullscreen and do not overwrite desktop geometry. No resize handle was added.
+
+Verification: nineteen Node tests and build syntax checks pass. The responsive browser suite passes English/Thai at all eight supported test widths. The polish browser check passes drag/reload restoration, saved dimensions, maximized restoration, mobile isolation, all nine contact sheets and photo-viewer focus restoration with no JavaScript errors. No push or deployment was performed.
+
+### Interactive homepage — 9 October 2026
+
+Visibility correction: reduced motion was active in the user's preview, suppressing all animation. Added an inline explanation and explicit, reversible, page-only animation preview. Default reduced motion remains respected. The preview browser check passes actual Bit gaze and wave with reduced motion enabled, then verifies Stop preview and reload restore the default. No OS preference, push or deployment changes.
+
+Scene-animation follow-up: independent Sky code-glyph motion, Mint foliage sway with fixed pots, and Dusk telescope-head rotation with a fixed stand and staggered soft star twinkles. Loops pause behind apps, case studies and dialogs. All 26 Node tests and build checks pass; the scene browser check confirms actual movement and motion safeguards in all three themes. Mint and Dusk screenshots were visually inspected. No push or deployment.
+
+Final polish: added bounded desktop-only mascot eye tracking with 900ms idle reset, an automatic 450ms monitor expansion/fade at the end of startup, and a compact mobile tide below Bit. Skip/Escape remain immediate; system reduced motion disables tracking and flow and bypasses the intro. Total automatic intro remains 1.8 seconds. The final dedicated browser check passes, and the eight-width English/Thai app regression suite passes. All 25 Node tests and build checks pass. Updated Figma implementation notes; no push or deployment.
+
+Additional motion polish: seamless tiled water loops replace reversing drift. Island clicks trigger a 650ms ripple; new app windows expand from the launch button in 300ms. Existing app restoration remains immediate. The dedicated flow browser check and the eight-width bilingual app regression suite pass, along with all 24 Node tests and build checks. Figma motion notes were updated and their text clipping corrected. No push or deployment.
+
+Power-up follow-up: added a 1.8-second native modal intro, session-scoped first-visit behavior, Enter now/Escape skipping, automatic focus restoration and Settings replay. Deep links and reduced-motion/motion-off preferences bypass the intro. Added independent 4-second mascot idle motion and theme-tinted layered water flow, paused behind apps. Water is desktop-only with the existing scene; the mascot and intro remain available on mobile. The artwork board now includes the original water vector and motion implementation notes. Twenty-four Node tests, build checks, the dedicated power-up browser check, homepage checks and the eight-width bilingual app regression suite pass. No push or deployment.
+
+Added original Bit SVG artwork with separately animated eyes and arm. Click or Enter advances a bilingual portfolio hint and triggers an 800ms wave when motion is enabled. Added direct homepage scene controls for Sky (floating workbench), Mint (garden lab) and Dusk (night observatory). Each renders different original vector artwork and persists its selection; Settings stays synchronized. Desktop artwork gently floats, follows the mouse within a small range and opens Projects when clicked. Ambient motion pauses behind apps, respects system reduced motion and the user's motion-off preference, and never plays sound. Mobile keeps the mascot and scene controls but hides the large artwork to avoid crowding.
+
+Figma artwork board `9:2` holds editable versions of all three scenes and the mascot, alongside the retained palette and prior direction boards. The final Figma composition was visually inspected. This is not a full-page mockup or a Figma animation prototype.
+
+Verification: twenty-two Node tests and build syntax checks pass. Homepage checks pass mascot click/Enter, hint cycling, three distinct scenes, persisted selection, Settings synchronization, paused background animation, motion-off, system reduced motion, parallax and scene-to-Projects navigation. Both languages pass seven homepage widths plus 650px-high laptop checks. The existing eight-width responsive/app suite also passes. No JavaScript errors, push or deployment.

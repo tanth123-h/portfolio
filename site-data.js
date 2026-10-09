@@ -19,7 +19,7 @@ export const portfolio = {
     nameTh: "นายแทนคุณ ศรีจันทร์แก้ว",
     nameEn: "Tankhun Srijankaew",
     title: "Student · AI Builder · Creator",
-    school: "Maryvit Nakhon Ratchasima",
+    school: "Marie Vithaya School, Nakhon Ratchasima, Thailand",
     schoolUrl: "https://www.mrv.ac.th/",
     grade: "Grade 11, Class 5/10, AI Programme",
     introduction:
@@ -44,7 +44,8 @@ export const portfolio = {
         "A working Flutter farming prototype that combines field mapping, soil monitoring, weather information, and AI-assisted farm planning.",
       approach:
         "Built with Flutter and Supabase, with MQTT sensor integration, stored soil readings, and weather information from Open-Meteo. Gemini supports farm analysis and recommendations alongside a rule-based recommendation engine. These features are implemented in the current project; they are not merely future plans.",
-      outcome: "Bronze, Central Isan regional round · National final 210 teams · No national award",
+      outcome:
+        "Bronze, Central Isan regional round · National final 210 teams · No national award",
       problem:
         "Farmers need clearer data to select suitable crops, plan fields, monitor soil, and manage costs.",
       whatIDid:
@@ -109,8 +110,8 @@ export const portfolio = {
           ),
           asset(
             "./public/assets/projects/agri-app-screen.jpg",
-            "Grow a Garden application screen",
-            "Grow a Garden application screen",
+            "Grow a Garden regional Bronze award photograph",
+            "Team receiving a regional Bronze award for Grow a Garden",
           ),
           asset(
             "./public/assets/graphics/depa-2026-poster.jpg",
@@ -154,7 +155,8 @@ export const portfolio = {
         "After attending the AI & Cyber Security workshop, our team had seven days to prepare a phishing-detection proposal and presentation video. We submitted both but did not qualify for the next round. The project has since developed into a working prototype.",
       approach:
         "The competition submission was a proposal for a multi-layer detection workflow. A working prototype is now available according to the project owner, alongside a demonstration video. No public source repository or measured detection benchmark is available; specific model and deployment claims are therefore not asserted.",
-      outcome: "Workshop and proposal submission · Did not qualify for the next round",
+      outcome:
+        "Workshop and proposal submission · Did not qualify for the next round",
       problem:
         "New phishing pages can evade blacklist-only protection and put personal data at risk.",
       whatIDid:
@@ -167,7 +169,6 @@ export const portfolio = {
         "Team leadership",
         "Pitching",
         "Software development",
-        "Hardware prototyping",
         "Edge AI",
         "Cybersecurity",
       ],
@@ -206,7 +207,8 @@ export const portfolio = {
         "A research concept exploring a repurposed glucose meter, cTnI testing, OCR, and TropoBot as a possible screening-support workflow. The national final is scheduled for 24 October 2026; I have not attended that round yet.",
       approach:
         "The proposal explores reading test results with OCR and communicating information through TropoBot. This is not a clinically validated or approved medical device, and is not a substitute for diagnosis.",
-      outcome: "Second runner-up · Selection-round Gold · National final scheduled 24 October 2026, not yet attended",
+      outcome:
+        "Second runner-up · Selection-round Gold · National final scheduled 24 October 2026, not yet attended",
       problem:
         "Early cardiac screening can be slow and difficult to access before a patient reaches specialist care.",
       whatIDid:
@@ -309,33 +311,33 @@ export const portfolio = {
           ),
           asset(
             "./public/assets/photos/youth-innovation-1.png",
-            "Youth Innovation photo 1",
-            "Youth Innovation project activity",
+            "Heritage AI hourly visitor dashboard",
+            "Heritage AI application showing hourly visitor counts and analysis",
           ),
           asset(
             "./public/assets/photos/youth-innovation-2.png",
-            "Youth Innovation photo 2",
-            "Youth Innovation project activity",
+            "Heritage AI live-camera detection prototype",
+            "Prototype camera streams showing people-detection boxes in a school computer room",
           ),
           asset(
             "./public/assets/photos/youth-innovation-3.png",
-            "Youth Innovation photo 3",
-            "Youth Innovation project activity",
+            "Heritage AI visitor-information website",
+            "Heritage AI prototype website for Phimai Historical Park",
           ),
           asset(
             "./public/assets/photos/youth-innovation-4.png",
-            "Youth Innovation photo 4",
-            "Youth Innovation project activity",
+            "Heritage AI software development",
+            "Laptop showing the project's software and console during development",
           ),
           asset(
             "./public/assets/photos/youth-innovation-5.png",
-            "Youth Innovation photo 5",
-            "Youth Innovation project activity",
+            "Heritage AI LINE crowd-alert demonstration",
+            "LINE messages demonstrating visitor-count alerts from the Heritage AI prototype",
           ),
           asset(
             "./public/assets/photos/youth-innovation-6.png",
-            "Youth Innovation photo 6",
-            "Youth Innovation project activity",
+            "Heritage AI information-assistant interface",
+            "Visitor website with the prototype's information-assistant chat panel open",
           ),
         ],
         certificateImages: [
@@ -784,13 +786,16 @@ export const portfolio = {
     },
     {
       id: "depa-2025-national",
-      outcome: "Qualified for and participated in the national round · Coding Thailand 2025",
+      outcome:
+        "Qualified for and participated in the national round · Coding Thailand 2025",
       title: "depa 2025: Weed-Detection and Spot-Spraying Vehicle",
       type: "National competition round",
       summary:
         "Developed a vehicle designed to detect weeds and target spraying only where needed, with the aim of reducing chemical use. The project reached the national round of depa’s Coding Thailand 2025: AI-Driven Future. The participation certificate was issued on 5 October 2025.",
       whatIDid:
         "Led most of the software and hardware work, then helped prepare and present the team project at national-round level.",
+      approach:
+        "Used CiRA Core AI for weed detection and integrated a servo-controlled mechanism to direct herbicide spraying at detected spots. The design aims to reduce unnecessary chemical use; no measured reduction percentage is claimed.",
       whatILearned:
         "By handling most of the software and hardware, I learned to trace problems across code, wiring, and device behaviour instead of testing each part in isolation. I also practised integrating the team’s prototype, preparing a working demonstration, and explaining technical decisions during a national-level presentation.",
       skills: [

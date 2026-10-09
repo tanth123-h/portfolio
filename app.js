@@ -1,472 +1,857 @@
-import { portfolio } from "./site-data.js?v=20260929-content";
-import { ui, thEntries } from "./content.js?v=20260929-content";
-import { catalog } from "./catalog.js?v=20260929-content";
-
-const $ = (selector, root = document) => root.querySelector(selector);
-let language = "en";
-const copy = () => ui[language];
-const escape = (value = "") =>
-  String(value).replace(
-    /[&<>"']/g,
-    (char) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        char
-      ],
-  );
-const entries = [...catalog.competitions, ...catalog.activities];
-const local = (entry) =>
-  language === "th" ? { ...entry, ...thEntries[entry.id] } : entry;
-const optimized = (src, width = 640) =>
-  "./public/assets/optimized/" +
-  src.replace("./public/assets/", "").replace(/[/.]/g, "-") +
-  "-" +
-  width +
-  ".webp";
-const date = (entry) => (language === "th" ? entry.dateTh : entry.date);
-const external = 'target="_blank" rel="noopener noreferrer"';
-const conceptPath = {
-  vision:
-    "M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
-  tree: "M12 3v7M5 10h14M5 10v7M19 10v7M9 3h6v4H9Z M2 17h6v4H2Z M16 17h6v4h-6Z",
-  chip: "M7 7h10v10H7ZM9 2v5m6-5v5M9 17v5m6-5v5M2 9h5m-5 6h5m10-6h5m-5 6h5",
-  chat: "M4 4h16v12H9l-5 4V4Zm4 5h8m-8 3h5",
-  research: "M9 3h6m-5 0v7l-5 9v2h14v-2l-5-9V3M8 16h8",
-  people: "M15 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M5 21v-3a7 7 0 0 1 14 0v3",
-  code: "m8 5-6 7 6 7m8-14 6 7-6 7M14 3l-4 18",
+import { sprite, scene, water, mascot, buddyMessage } from "./pixel-art.js";
+import { shouldBoot, buddyGaze } from "./boot-state.js";
+import {
+  boundedPosition,
+  resolveRoute,
+  routeFor,
+  restoreWindowGeometry,
+} from "./os-state.js";
+import {
+  portfolio,
+  entries,
+  projects,
+  setLanguage,
+  getLanguage,
+  copy,
+  e,
+  local,
+  display,
+  asset,
+  date,
+  image,
+  badges,
+  fileCard,
+  overview,
+  media,
+  contactSheet,
+} from "./portfolio-view.js";
+const $ = (s) => document.querySelector(s);
+const apps = {
+  projects: "PROJECTS.EXE",
+  achievements: "ACHIEVEMENTS.EXE",
+  memories: "MEMORIES.EXE",
+  about: "ABOUT.TXT",
+  research: "RESEARCH.EXE",
+  contact: "CONTACT.APP",
+  settings: "SETTINGS",
 };
-function icon(label) {
-  const key = label.toLowerCase();
-  const logos = {
-    python: "python",
-    javascript: "javascript",
-    html: "html5",
-    css: "css3",
-    opencv: "opencv",
-    jupyter: "jupyter",
-    arduino: "arduino",
-    flutter: "flutter",
-    kotlin: "kotlin",
-    fastapi: "fastapi",
+const windows = new Map();
+let layer = 10,
+  active = null,
+  current = null,
+  lastTrigger = null,
+  lastImageTrigger;
+let buddyIndex = 0,
+  buddyTimer;
+const small = () => matchMedia("(max-width:800px)").matches;
+const text = (en, th) => (getLanguage() === "th" ? th : en);
+const reducedMotion = () => !motion;
+function motionHint() {
+  const hint = $("#motion-notice");
+  hint.hidden = false;
+  hint.innerHTML = `<button data-motion aria-pressed="${motion}">${motion ? text("Motion on · Turn off", "Motion เปิด · กดเพื่อปิด") : text("Motion off · Turn on", "Motion ปิด · กดเพื่อเปิด")}</button>`;
+}
+let bootTimer, bootFrame, bootTrigger;
+let gazeTimer;
+function resetGaze() {
+  clearTimeout(gazeTimer);
+  $("#pixel-buddy").style.removeProperty("--gaze-x");
+  $("#pixel-buddy").style.removeProperty("--gaze-y");
+}
+function dismissBoot(animate = false) {
+  clearTimeout(bootTimer);
+  cancelAnimationFrame(bootFrame);
+  if (animate && $("#boot-screen").open && motion && !reducedMotion()) {
+    $("#boot-screen").classList.add("boot-leaving");
+    bootTimer = setTimeout(() => dismissBoot(), 450);
+    return;
+  }
+  $("#boot-screen").classList.remove("boot-leaving");
+  if ($("#boot-screen").open) $("#boot-screen").close();
+}
+function startBoot(replay = false) {
+  if (
+    !shouldBoot({
+      path: location.pathname,
+      seen: false,
+      motion,
+      reduced: reducedMotion(),
+    })
+  )
+    return;
+  clearTimeout(bootTimer);
+  cancelAnimationFrame(bootFrame);
+  bootTrigger = document.activeElement;
+  $("#boot-title").textContent = text(
+    "Starting your desktop…",
+    "กำลังเปิดโลกเล็ก ๆ ของผม…",
+  );
+  $("#boot-caption").textContent = text(
+    "A quick hello from Bit. Your desktop is next.",
+    "Bit ขอทักทายสักครู่ แล้วพบกันที่หน้าแรก",
+  );
+  $(".boot-walker").innerHTML = mascot();
+  $("#boot-progress").setAttribute(
+    "aria-label",
+    text("Startup animation", "ความคืบหน้าหน้าเปิดเว็บ"),
+  );
+  $("#boot-progress").setAttribute("aria-valuenow", "0");
+  $("#boot-percent").textContent = "0%";
+  $(".boot-display").style.setProperty("--boot-progress", 0);
+  $("#boot-skip").textContent = text("Enter now ↗", "เข้าเลย ↗");
+  $("#boot-screen").showModal();
+  const started = performance.now();
+  const advance = (now) => {
+    if (!$("#boot-screen").open) return;
+    const fraction = Math.min(1, (now - started) / 1600);
+    const percent = Math.floor(fraction * 100);
+    $(".boot-display").style.setProperty("--boot-progress", fraction);
+    $("#boot-progress").setAttribute("aria-valuenow", percent);
+    $("#boot-percent").textContent = `${percent}%`;
+    if (fraction < 1) bootFrame = requestAnimationFrame(advance);
+    else {
+      $("#boot-title").textContent = text(
+        "Ready. Hello, world!",
+        "พร้อมแล้ว สวัสดีครับ!",
+      );
+      bootTimer = setTimeout(() => dismissBoot(true), 150);
+    }
   };
-  const match = Object.keys(logos).find((name) => key.includes(name));
-  if (match || key === "c")
-    return (
-      '<img class="icon" alt="" width="20" height="20" src="./public/assets/icons/' +
-      (match ? logos[match] : "c") +
-      '.svg">'
-    );
-  const path = /tree/.test(key)
-    ? "tree"
-    : /yolo|vision|detect|classification|ocr/.test(key)
-      ? "vision"
-      : /rag|chat/.test(key)
-        ? "chat"
-        : /research|วิจัย/.test(key)
-          ? "research"
-          : /lead|pitch|นำเสนอ|ทีม/.test(key)
-            ? "people"
-            : /iot|edge|hardware|ฮาร์ดแวร์/.test(key)
-              ? "chip"
-              : "code";
-  return (
-    '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="' +
-    conceptPath[path] +
-    '"/></svg>'
-  );
+  bootFrame = requestAnimationFrame(advance);
 }
-function image(item, cover = false) {
-  if (item.src.includes('/previews/')) return '<img src="' + escape(item.src) + '" alt="' + escape(item.alt) + '" width="1280" height="720" loading="lazy" decoding="async">';
-  return (
-    '<img lang="en" src="' +
-    optimized(item.src) +
-    '" srcset="' +
-    optimized(item.src) +
-    " 640w, " +
-    optimized(item.src, 1200) +
-    ' 1200w" sizes="' +
-    (cover
-      ? "(max-width:760px) 100vw, 560px"
-      : "(max-width:480px) 100vw, 420px") +
-    '" width="1200" height="800" loading="lazy" decoding="async" alt="' +
-    escape(item.alt || item.title) +
-    '">'
-  );
+$("#boot-skip").addEventListener("click", () => dismissBoot());
+$("#boot-screen").addEventListener("close", () => {
+  clearTimeout(bootTimer);
+  cancelAnimationFrame(bootFrame);
+  $("#boot-screen").classList.remove("boot-leaving");
+  const target =
+    bootTrigger?.isConnected && bootTrigger !== document.body
+      ? bootTrigger
+      : $(".welcome-note .primary");
+  target.focus({ preventScroll: true });
+});
+let motion = localStorage.getItem("pixel-motion-explicit") !== "off",
+  wallpaper = ["sky", "mint", "dusk"].includes(
+    localStorage.getItem("pixel-wallpaper"),
+  )
+    ? localStorage.getItem("pixel-wallpaper")
+    : "sky";
+function preferences() {
+  document.body.dataset.wallpaper = wallpaper;
+  document.body.classList.toggle("reduce-motion", !motion || reducedMotion());
+  if (!motion || reducedMotion()) {
+    resetGaze();
+    dismissBoot();
+    $("#wallpaper-art").style.removeProperty("--look-x");
+    $("#wallpaper-art").style.removeProperty("--look-y");
+  }
+  motionHint();
 }
-function card(raw, award = false, index = 0) {
-  const entry = local(raw);
-  const featured =
-    (raw.id === 'phishwall-ai' ? {src:'./public/assets/previews/phishwall-demo.jpg', alt:'PhishWall demonstration interface'} : null) ||
-    (raw.id === 'troposense' ? {src:'./public/assets/previews/troposense-pitch.jpg', alt:'TropoSense presentation video frame'} : null) ||
-    (raw.id === 'agri' ? raw.media.photos.find(item => item.src.includes('agri-app-screen')) : null) ||
-    raw.media.graphics[0] ||
-    raw.media.photos[0] ||
-    raw.media.certificateImages[0];
-  const poster =
-    raw.id === 'agri' || featured.src.includes('/previews/') ||
-    raw.media.graphics.includes(featured) ||
-    raw.media.certificateImages.includes(featured);
-  const role = award
-    ? ""
-    : '<p class="card-role"><strong>' +
-      copy().role +
-      "</strong>" +
-      escape(entry.whatIDid) +
-      '</p><div class="detail-skills">' +
-      entry.skills
-        .slice(0, 3)
-        .map((label) => "<span>" + icon(label) + escape(label) + "</span>")
-        .join("") +
-      "</div>";
-  return (
-    '<article class="' +
-    (award ? "award-card" : "project-card") +
-    '" id="entry-' +
-    raw.id +
-    '"><div class="cover' +
-    (poster ? " poster" : "") +
-    '">' +
-    image(featured, true) +
-    '</div><div class="card-body"><p class="eyebrow">' +
-    escape(entry.type) +
-    "</p><h3>" +
-    escape(entry.title) +
-    "</h3>" +
-    '<p class="date">' + escape(date(entry) || copy().dateUnknown) + '</p>' +
-    (entry.outcome
-      ? '<p class="outcome"><strong>' + copy().outcome + '</strong> ' + escape(entry.outcome) + "</p>"
-      : "") +
-    role + '<p>' + escape(entry.summary) + '</p>' +
-    '<div class="card-bottom"><button class="story-button" type="button" data-entry="' +
-    entry.id +
-    '" aria-label="' +
-    escape((award ? copy().details : copy().open) + ": " + entry.title) +
-    '">' +
-    (award ? copy().details : copy().open) +
-    ' <span aria-hidden="true">↗</span></button></div></div></article>'
-  );
-}
-function renderSkills() {
-  const groups = [
-    [
-      copy().ai,
-      [
-        "OpenCV",
-        "Object detection",
-        "Image classification",
-        "Decision Tree AI",
-        "Edge AI",
-        "RAG chatbot",
-      ],
-    ],
-    [
-      copy().code,
-      ["Python", "Jupyter Notebook", "HTML", "CSS", "JavaScript", "C"],
-    ],
-    [
-      copy().make,
-      [
-        "Arduino",
-        "IoT / hardware",
-        "Research",
-        "Project leadership",
-        "Pitching",
-      ],
-    ],
-  ];
-  $("#skills-grid").innerHTML = groups
+preferences();
+$("#pixel-buddy").innerHTML = `<span class="buddy-idle">${mascot()}</span>`;
+function renderWorld() {
+  $("#wallpaper-art").innerHTML =
+    `<button class="scene-launch" data-app="projects" aria-label="${text("Explore projects from the workbench", "เปิดโครงงานจากโต๊ะทดลอง")}"><span class="scene-float">${scene(wallpaper)}</span><span class="scene-caption">${text({ sky: "Floating workbench", mint: "Garden lab", dusk: "Night observatory" }[wallpaper], { sky: "โต๊ะทดลองบนเกาะลอย", mint: "สวนทดลอง", dusk: "หอดูดาวยามค่ำ" }[wallpaper])}<span class="scene-open">${text("Click to explore", "คลิกเพื่อสำรวจ")}</span></span></button>`;
+  $(".world-switcher").innerHTML = ["sky", "mint", "dusk"]
     .map(
-      ([title, items]) =>
-        '<div class="skill-group"><h4>' +
-        title +
-        '</h4><div class="skill-list">' +
-        items
-          .map(
-            (label) =>
-              '<span class="skill-chip">' +
-              icon(label) +
-              escape(label) +
-              "</span>",
-          )
-          .join("") +
-        "</div></div>",
+      (v) =>
+        `<button data-world="${v}" aria-pressed="${wallpaper === v}"><span class="world-dot ${v}" aria-hidden="true"></span>${v[0].toUpperCase() + v.slice(1)}</button>`,
     )
     .join("");
+  $(".world-switcher").setAttribute(
+    "aria-label",
+    text("Choose a desktop scene", "เลือกฉาก desktop"),
+  );
+  $("#pixel-buddy").setAttribute(
+    "aria-label",
+    text("Say hello to Bit", "ทักทาย Bit"),
+  );
+  $("#buddy-message").textContent = buddyMessage(buddyIndex, getLanguage());
+  $(".scene-float").insertAdjacentHTML("beforeend", water(wallpaper));
+  $("#mobile-tide").innerHTML = water(wallpaper);
+  motionHint();
 }
-function renderContact() {
-  const contact = portfolio.profile.contact;
-  const links = [
-    ["GitHub", contact.github, "github"],
-    ["Instagram", contact.instagram, "instagram"],
-    ["Facebook", contact.facebook, "facebook"],
-    ["Discord", contact.discord, "discord"],
-    [copy().phone, "tel:" + contact.phone, "phone"],
-  ];
-  $("#contact-links").innerHTML = links
+function renderShell() {
+  renderWorld();
+  $("#desktop-icons").innerHTML = Object.entries(apps)
     .map(
-      ([label, url, name]) =>
-        '<a href="' +
-        escape(url) +
-        '" ' +
-        (url.startsWith("http") ? external : "") +
-        '><img class="icon" src="./public/assets/icons/' +
-        name +
-        '.svg" alt="" width="20" height="20">' +
-        escape(label) +
-        "</a>",
+      ([id, label]) =>
+        `<button class="desktop-icon" data-app="${id}">${sprite(id)}<span>${label}</span></button>`,
     )
     .join("");
-}
-function render() {
-  document.documentElement.lang = language;
-  document.querySelectorAll("[data-text]").forEach((node) => {
-    node.textContent = copy()[node.dataset.text];
-  });
-  $("#language-toggle").textContent = language === "en" ? "TH" : "EN";
+  $("#launcher-menu").innerHTML = Object.entries(apps)
+    .map(
+      ([id, label]) =>
+        `<button data-app="${id}">${sprite(id)}${label}</button>`,
+    )
+    .join("");
+  $(".task-settings").innerHTML = sprite("settings");
+  $("#language-toggle").textContent = getLanguage() === "en" ? "TH" : "EN";
   $("#language-toggle").setAttribute(
     "aria-label",
-    language === "en" ? "Switch to Thai" : "Switch to English",
+    getLanguage() === "en" ? "Switch to Thai" : "Switch to English",
   );
-  $("#projects-grid").innerHTML = catalog.competitions
-    .map((entry, index) => card(entry, false, index))
+  $(".welcome-description").textContent = text(
+    "AI, software, hardware — and the things I learned building them.",
+    "AI ซอฟต์แวร์ ฮาร์ดแวร์ และสิ่งที่เรียนรู้จากการลงมือทำ",
+  );
+  $(".welcome-note .primary").textContent = text(
+    "Explore my work ↗",
+    "สำรวจผลงาน ↗",
+  );
+}
+function taskbar() {
+  resetGaze();
+  document.body.classList.toggle(
+    "home-busy",
+    [...windows.values()].some((w) => !w.minimized),
+  );
+  $("#task-buttons").innerHTML = [...windows]
+    .map(
+      ([id, w]) =>
+        `<button data-task="${id}" aria-label="${apps[id]}" class="${id === active && !w.minimized ? "active" : ""}" aria-pressed="${id === active && !w.minimized}">${sprite(id)}<span>${apps[id]}</span></button>`,
+    )
     .join("");
-  $("#achievements-grid").innerHTML = catalog.activities
-    .map(entry => card(entry, true))
-    .join("");
-  renderSkills();
-  renderContact();
 }
-const returnFocus = new WeakMap();
-function show(dialog, trigger) {
-  returnFocus.set(dialog, trigger);
-  dialog.showModal();
-  ($("[data-close]", dialog) || dialog).focus();
+function focusWindow(id) {
+  const w = windows.get(id);
+  if (!w) return;
+  active = id;
+  w.minimized = false;
+  w.node.hidden = false;
+  w.node.style.zIndex = ++layer;
+  for (const [key, item] of windows)
+    item.node.classList.toggle("focused", key === id);
+  for (const [key, item] of windows) {
+    item.node.hidden = item.minimized || (small() && key !== id);
+    if (item.node.hidden) pause(item.node);
+  }
+  for (const selector of ["#desktop-icons", ".welcome-note"])
+    $(selector).inert = small();
+  taskbar();
 }
-function overview(entry) {
-  const fields = [
-    ["problem", "problem"],
-    ["role", "whatIDid"],
-    ["approach", "approach"],
-    ["challenge", "challenge"],
-    ["learned", "whatILearned"],
-    ["outcome", "outcome"],
-  ];
-  return (
-    '<div class="detail-grid">' +
-    fields
-      .filter(([, field]) => entry[field])
-      .map(
-        ([label, field]) =>
-          '<section class="detail-block"><h3>' +
-          copy()[label] +
-          "</h3><p>" +
-          escape(entry[field]) +
-          "</p></section>",
-      )
-      .join("") +
-    '</div><div class="detail-skills">' +
-    entry.skills
-      .map((label) => "<span>" + icon(label) + escape(label) + "</span>")
-      .join("") +
-    '</div><div class="detail-links">' +
-    Object.entries(entry.links || {})
-      .map(
-        ([label, url]) =>
-          '<a href="' +
-          escape(url) +
-          '" ' +
-          external +
-          ">" +
-          escape(label === "github" ? copy().source : copy().publication) +
-          " ↗</a>",
-      )
-      .join("") +
-    "</div>"
+function pause(root) {
+  root.querySelectorAll("video").forEach((v) => v.pause());
+}
+function savedGeometry(id) {
+  try {
+    return JSON.parse(localStorage.getItem("pixel-window-" + id));
+  } catch {
+    return null;
+  }
+}
+function rememberWindow(id) {
+  const w = windows.get(id);
+  if (!w || small()) return;
+  try {
+    localStorage.setItem(
+      "pixel-window-" + id,
+      JSON.stringify({
+        ...w.geometry,
+        maximized: w.node.classList.contains("maximized"),
+      }),
+    );
+  } catch {
+    /* Storage may be unavailable in private or restricted browsers. */
+  }
+}
+function placeWindow(w) {
+  const field = $(".desktop-field");
+  const geometry = restoreWindowGeometry(
+    w.geometry,
+    w.geometry,
+    field.clientWidth,
+    field.clientHeight,
   );
+  Object.assign(w.node.style, {
+    left: geometry.x + "px",
+    top: geometry.y + "px",
+    width: geometry.width + "px",
+    height: geometry.height + "px",
+  });
 }
-function media(entry, group) {
-  if (group === "overview") return overview(entry);
-  const items = entry.media[group] || [];
-  if (group === "pdfs")
-    return items
-      .map(
-        (item) =>
-          '<div class="file-row"><h3 lang="en">' +
-          escape(item.title) +
-          '</h3><div class="file-actions"><a href="' +
-          escape(item.src) +
-          '" ' +
-          external +
-          ">" +
-          copy().openFile +
-          ' ↗</a><a href="' +
-          escape(item.src) +
-          '" download>' +
-          copy().download +
-          '</a></div></div><div class="pdf-preview" data-pdf="' + escape(item.src) + '"></div>',
-      )
-      .join("");
-  if (group === "videos")
-    return items
-      .map(
-        (item) =>
-          '<div class="video-block"><h3 lang="en">' +
-          escape(item.title) +
-          "</h3><p>" +
-          copy().videoNote +
-          '</p><video lang="en" controls playsinline preload="none" poster="' + escape(item.src.replace('/videos/', '/previews/').replace('.mp4', '.jpg')) + '" aria-label="' +
-          escape(item.title) +
-          '" src="' +
-          escape(item.src.replace('/videos/', '/video-web/')) +
-          '"></video><div class="file-actions"><a href="' +
-          escape(item.src) +
-          '" download>' +
-          copy().download +
-          "</a></div></div>",
-      )
-      .join("");
-  return (
-    '<div class="media-images">' +
-    items
-      .map(
-        (item) =>
-          '<button type="button" lang="en" class="media-image" data-image="' +
-          escape(item.src) +
-          '" data-alt="' +
-          escape(item.alt || item.title) +
-          '">' +
-          image(item) +
-          "<span>" +
-          escape(item.title) +
-          " ↗</span></button>",
-      )
-      .join("") +
-    "</div>"
+function closeWindow(id) {
+  const w = windows.get(id);
+  if (!w) return;
+  rememberWindow(id);
+  pause(w.node);
+  w.node.remove();
+  windows.delete(id);
+  active = null;
+  const prev = [...windows].reverse().find(([, item]) => !item.minimized);
+  if (prev) {
+    focusWindow(prev[0]);
+    prev[1].node.querySelector(".window-body").focus();
+  } else {
+    taskbar();
+    $("#desktop-icons").inert = false;
+    $(".welcome-note").inert = false;
+    if (w.trigger?.isConnected) w.trigger.focus();
+  }
+}
+function minimize(id) {
+  const w = windows.get(id);
+  pause(w.node);
+  w.minimized = true;
+  w.node.hidden = true;
+  active = null;
+  const next = [...windows]
+    .reverse()
+    .find(([key, item]) => key !== id && !item.minimized);
+  if (next) focusWindow(next[0]);
+  else {
+    taskbar();
+    $("#desktop-icons").inert = false;
+    $(".welcome-note").inert = false;
+  }
+  $('#task-buttons [data-task="' + id + '"]').focus();
+}
+function openApp(id, trigger) {
+  if (!apps[id]) return;
+  $("#launcher-menu").hidden = true;
+  $("[data-launcher]").setAttribute("aria-expanded", "false");
+  if (windows.has(id)) {
+    focusWindow(id);
+    windows.get(id).node.querySelector(".window-body").focus();
+    return;
+  }
+  const node = document.createElement("section");
+  node.style.animation = "none";
+  node.className = "app-window";
+  node.dataset.window = id;
+  node.setAttribute("aria-label", apps[id]);
+  node.innerHTML = `<header class="window-titlebar">${sprite(id)}<h2>${apps[id]}</h2><div class="window-controls"><button data-minimize="${id}" aria-label="Minimize ${apps[id]}">−</button><button data-maximize="${id}" aria-label="Maximize ${apps[id]}" aria-pressed="false">□</button><button data-window-close="${id}" aria-label="Close ${apps[id]}">×</button></div></header><div class="window-body" tabindex="-1"></div>`;
+  $("#windows").append(node);
+  const n = windows.size % 4,
+    fallback = { x: 160 + n * 32, y: 32 + n * 28, width: 850, height: 680 };
+  const geometry = restoreWindowGeometry(
+    savedGeometry(id),
+    fallback,
+    small() ? 1440 : $(".desktop-field").clientWidth,
+    small() ? 900 : $(".desktop-field").clientHeight,
   );
+  const w = { node, trigger, minimized: false, geometry };
+  windows.set(id, w);
+  if (!small()) placeWindow(w);
+  node.classList.toggle("maximized", geometry.maximized);
+  const maxButton = node.querySelector("[data-maximize]");
+  maxButton.setAttribute("aria-pressed", geometry.maximized);
+  maxButton.setAttribute(
+    "aria-label",
+    (geometry.maximized ? "Restore " : "Maximize ") + apps[id],
+  );
+  fillApp(id);
+  if (trigger?.isConnected && motion && !reducedMotion()) {
+    const from = trigger.getBoundingClientRect();
+    const to = node.getBoundingClientRect();
+    node.style.setProperty(
+      "--open-x",
+      from.x + from.width / 2 - to.x - to.width / 2 + "px",
+    );
+    node.style.setProperty(
+      "--open-y",
+      from.y + from.height / 2 - to.y - to.height / 2 + "px",
+    );
+  }
+  node.style.removeProperty("animation");
+  focusWindow(id);
+  node.querySelector(".window-body").focus();
+  node.addEventListener("pointerdown", () => focusWindow(id));
+  node.addEventListener("focusin", () => {
+    if (active !== id) focusWindow(id);
+  });
+  const bar = node.querySelector(".window-titlebar");
+  let drag = null;
+  bar.addEventListener("pointerdown", (event) => {
+    if (
+      small() ||
+      node.classList.contains("maximized") ||
+      event.button !== 0 ||
+      event.target.closest("button")
+    )
+      return;
+    drag = {
+      x: event.clientX,
+      y: event.clientY,
+      left: node.offsetLeft,
+      top: node.offsetTop,
+    };
+    bar.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+  bar.addEventListener("pointermove", (event) => {
+    if (!drag) return;
+    const p = boundedPosition(
+      drag.left + event.clientX - drag.x,
+      drag.top + event.clientY - drag.y,
+      node.offsetWidth,
+      node.offsetHeight,
+      $(".desktop-field").clientWidth,
+      $(".desktop-field").clientHeight,
+    );
+    node.style.left = p.x + "px";
+    node.style.top = p.y + "px";
+    w.geometry = {
+      ...w.geometry,
+      x: p.x,
+      y: p.y,
+      width: node.offsetWidth,
+      height: node.offsetHeight,
+    };
+  });
+  const release = () => {
+    if (drag) rememberWindow(id);
+    drag = null;
+  };
+  bar.addEventListener("pointerup", release);
+  bar.addEventListener("pointercancel", release);
+  bar.addEventListener("lostpointercapture", release);
 }
-let activeEntry;
-function openEntry(id, trigger) {
-  const raw = entries.find((entry) => entry.id === id);
-  if (!raw) return;
-  activeEntry = local(raw);
-  const entry = activeEntry;
-  const dialog = $("#portfolio-dialog");
+const intro = (title, desc) =>
+  `<div class="app-intro"><h3>${title}</h3><p>${desc}</p></div>`;
+function fillApp(id) {
+  const body = windows.get(id).node.querySelector(".window-body");
+  if (id === "projects")
+    body.innerHTML =
+      intro(
+        text("Project archive", "ผลงานโครงงาน"),
+        text(
+          "Six projects. Open a file to explore the prototype, my role, and the evidence.",
+          "เปิดโครงงานเพื่ออ่านรายละเอียด บทบาท และดูหลักฐานการทำงาน",
+        ),
+      ) +
+      `<div class="file-grid">${projects.map((p) => fileCard(p)).join("")}</div>`;
+  if (id === "achievements")
+    body.innerHTML =
+      intro(
+        text("Results & experiences", "ผลการแข่งขันและประสบการณ์"),
+        text(
+          "Awards, qualification and participation are different. Each record keeps its own context.",
+          "แยกรางวัล การผ่านเข้ารอบ และการเข้าร่วมตามข้อเท็จจริง",
+        ),
+      ) +
+      `<div class="filter-bar" aria-label="Filter experiences">${[
+        ["all", text("All", "ทั้งหมด")],
+        ["competition", text("Competitions", "การแข่งขัน")],
+        ["activity", text("Training & exhibitions", "อบรมและนิทรรศการ")],
+      ]
+        .map(
+          ([v, label]) =>
+            `<button data-filter="${v}" aria-pressed="${v === "all"}">${label}</button>`,
+        )
+        .join(
+          "",
+        )}</div><div class="file-grid" id="achievement-files">${entries.map((p) => fileCard(p, "achievements")).join("")}</div>`;
+  if (id === "about")
+    body.innerHTML =
+      intro("Tankhun Srijankaew", "นายแทนคุณ ศรีจันทร์แก้ว") +
+      `<div class="about-paper"><p class="pixel-label">ABOUT.TXT / ${text("STUDENT & BUILDER", "นักเรียนและผู้สร้างต้นแบบ")}</p><h3>${text("Learning by making.", "เรียนรู้ผ่านการลงมือทำ")}</h3><p>${text("I am an AI-programme student at Marie Vithaya School in Nakhon Ratchasima, Thailand. I study in Mathayom 5, Class 5/10. My work connects computer vision, software and physical prototypes.", "ผมเป็นนักเรียนแผนการเรียน AI ชั้นมัธยมศึกษาปีที่ 5 ห้อง 5/10 โรงเรียนมารีย์วิทยา จังหวัดนครราชสีมา สนใจการเชื่อมต่อคอมพิวเตอร์วิทัศน์ ซอฟต์แวร์ และต้นแบบฮาร์ดแวร์")}</p><p>${text("Competitions have helped me learn to lead a team, develop applications, connect sensors, document research and explain a working prototype. This portfolio includes the process as well as the results.", "การแข่งขันช่วยให้ผมเรียนรู้การคุมทีม พัฒนาแอปพลิเคชัน เชื่อมต่อเซนเซอร์ เขียนเอกสาร และอธิบายต้นแบบที่สร้างขึ้น แฟ้มผลงานนี้จึงรวมทั้งกระบวนการและผลลัพธ์")}</p><h3>${text("Tools I work with", "เครื่องมือและทักษะ")}</h3>${badges({ skills: ["OpenCV", "Object detection", "Image classification", "Decision Tree AI", "Edge AI", "RAG chatbot", "Python", "Flutter", "Kotlin", "FastAPI", "HTML", "CSS", "JavaScript", "C", "Arduino", "Research", "Project leadership", "Pitching"] })}<div class="about-photo">${image(entries.find((p) => p.id === "minister-exhibition").media.photos[0])}</div></div>`;
+  if (id === "contact") {
+    const c = portfolio.profile.contact;
+    body.innerHTML =
+      intro(
+        text("Let’s talk.", "ติดต่อผม"),
+        text(
+          "Questions, project ideas, or a conversation about AI.",
+          "พูดคุยเรื่องโครงงาน การเรียนรู้ หรือไอเดีย AI",
+        ),
+      ) +
+      `<a class="email-link" href="mailto:${c.email}">${c.email} ↗</a><div class="contact-list">${[
+        ["GitHub", c.github, "github"],
+        ["Instagram", c.instagram, "instagram"],
+        ["Facebook", c.facebook, "facebook"],
+        ["Discord", c.discord, "discord"],
+        [c.phone, "tel:" + c.phone, "phone"],
+      ]
+        .map(
+          ([label, url, logo]) =>
+            `<a href="${url}" ${url.startsWith("http") ? 'target="_blank" rel="noopener noreferrer"' : ""}><img class="icon" src="/public/assets/icons/${logo}.svg" alt="">${label} ↗</a>`,
+        )
+        .join("")}</div>`;
+  }
+  if (id === "research")
+    body.innerHTML =
+      intro(
+        text("Research & documents", "งานวิจัยและเอกสาร"),
+        text(
+          "Project proposals, reports and certificates. These are not all peer-reviewed publications.",
+          "ข้อเสนอ รายงาน และเกียรติบัตร ไม่ได้เป็นผลงานตีพิมพ์ที่ผ่านการประเมินทั้งหมด",
+        ),
+      ) +
+      `<div class="research-list">${entries
+        .filter((p) => p.media.pdfs.length)
+        .map(
+          (p) =>
+            `<section><h3>${e(local(p).title)}</h3><p>${e(local(p).summary)}</p>${p.media.pdfs.map((f, i) => `<button class="document-link" data-document="${p.id}" data-document-index="${i}">${sprite("about")}${e(f.title)} ↗</button>`).join("")}<a href="${routeFor(p.id, projects.includes(p) ? "projects" : "achievements")}" data-route>${text("Related story", "อ่านเรื่องราว")} ↗</a>${p.links?.publication ? `<a class="publication-link" href="${e(p.links.publication)}" target="_blank" rel="noopener noreferrer">${copy().publication} ↗</a>` : ""}</section>`,
+        )
+        .join("")}</div><div id="research-reader"></div>`;
+  if (id === "settings")
+    body.innerHTML =
+      intro(
+        text("Desktop preferences", "ตั้งค่าเดสก์ท็อป"),
+        text(
+          "Preferences stay on this device. No sound plays automatically.",
+          "บันทึกการตั้งค่าบนอุปกรณ์นี้ ไม่มีเสียงเล่นอัตโนมัติ",
+        ),
+      ) +
+      `<fieldset><legend>${text("Wallpaper", "พื้นหลัง")}</legend><div class="wallpaper-options">${[
+        ["sky", "SKY / blue"],
+        ["mint", "GARDEN / mint"],
+        ["dusk", "DUSK / lavender"],
+      ]
+        .map(
+          ([v, label]) =>
+            `<button class="swatch ${v}" data-wallpaper="${v}" aria-pressed="${wallpaper === v}">${label}</button>`,
+        )
+        .join(
+          "",
+        )}</div></fieldset><fieldset><legend>${text("Animation", "ภาพเคลื่อนไหว")}</legend><button data-motion aria-pressed="${motion}">${motion ? text("Motion on", "เปิดภาพเคลื่อนไหว") : text("Motion off", "ปิดภาพเคลื่อนไหว")}</button><p>${text("Animations are on by default. This switch controls all website motion and remembers your choice.", "เปิดภาพเคลื่อนไหวเป็นค่าเริ่มต้น ปุ่มนี้ควบคุมการเคลื่อนไหวทั้งหมดบนเว็บและจำตัวเลือกของคุณ")}</p><button data-replay-intro ${!motion ? "disabled" : ""}>${text("Replay power-up", "เล่น power-up อีกครั้ง")}</button></fieldset>`;
+  if (id === "memories") {
+    const albums = entries.filter((p) => p.media.photos.length);
+    body.innerHTML =
+      intro(
+        text("Behind the projects", "ภาพระหว่างการทำงาน"),
+        text(
+          "Real teams, prototypes and presentation days.",
+          "ภาพทีมงาน ต้นแบบ และวันนำเสนอจริง",
+        ),
+      ) +
+      `<label class="album-select">${text("Album", "อัลบั้ม")}<select id="album-select">${albums.map((p) => `<option value="${p.id}">${e(local(p).title)}</option>`).join("")}</select></label><div id="album"></div>`;
+    renderAlbum(albums[0].id, 0);
+  }
+}
+function renderAlbum(id, index) {
+  const raw = entries.find((p) => p.id === id),
+    photos = raw.media.photos;
+  index = (index + photos.length) % photos.length;
+  const p = photos[index];
+  const expanded = $(".album-viewer")?.open || index !== 0;
+  $("#album").innerHTML =
+    `<p class="album-count">${photos.length} ${text("photos · Select a frame to view full size", "ภาพ · เลือกภาพเพื่อดูขนาดเต็ม")}</p>${contactSheet(photos)}<details class="album-viewer" ${expanded ? "open" : ""}><summary>${text("Browse one photo at a time", "ดูภาพทีละภาพ")}</summary><div class="album-main"><button class="media-image" data-image="${e(asset(p.src))}" data-alt="${e(p.alt || p.title)}">${image(p)}</button></div><div class="album-toolbar"><button data-album="${id}" data-index="${index - 1}" aria-label="Previous photo">←</button><span>${index + 1} / ${photos.length} · ${e(p.title)}</span><button data-album="${id}" data-index="${index + 1}" aria-label="Next photo">→</button></div><div class="thumbnail-strip">${photos.map((p, i) => `<button data-album="${id}" data-index="${i}" aria-label="Photo ${i + 1}" aria-pressed="${index === i}">${image(p)}</button>`).join("")}</div></details><a class="album-story" href="${routeFor(id, projects.includes(raw) ? "projects" : "achievements")}" data-route>${text("Open related story", "อ่านเรื่องราวที่เกี่ยวข้อง")} ↗</a>`;
+}
+async function mountPdfs(root) {
+  const readers = [...root.querySelectorAll("[data-pdf]")];
+  if (!readers.length) return;
+  try {
+    const { mountReader } = await import("./pdf-viewer.js");
+    readers.forEach((n) => {
+      if (n.isConnected) mountReader(n, getLanguage());
+    });
+  } catch {
+    readers.forEach(
+      (n) =>
+        (n.textContent = text(
+          "Use the open-file link above.",
+          "เปิดเอกสารผ่านลิงก์ด้านบนได้",
+        )),
+    );
+  }
+}
+function renderCase(route) {
+  current = route;
+  const raw = route.entry,
+    item = display(raw, route.kind);
+  pause($("#desktop"));
+  $("#desktop").hidden = true;
+  $("#case-study").hidden = false;
+  document.body.classList.add("case-open");
+  document.title = item.title + " — Tankhun Srijankaew";
   const groups = [
     "overview",
-    ...Object.keys(entry.media).filter((key) => entry.media[key].length),
+    ...Object.keys(raw.media).filter((k) => raw.media[k].length),
   ];
-  dialog.innerHTML =
-    '<div class="dialog-top"><div><p class="eyebrow">' +
-    escape(entry.type) +
-    '</p><h2 id="dialog-title">' +
-    escape(entry.title) +
-    '</h2><p class="dialog-summary">' +
-    escape(entry.summary) +
-    '</p><p class="date">' +
-    escape(date(entry) || copy().dateUnknown) +
-    "</p>" +
-    (entry.id.includes("depa-2026") || entry.id === "agri"
-      ? '<p class="date">' + copy().dateContext + "</p>"
-      : "") +
-    '</div><button class="close-button" type="button" data-close aria-label="' +
-    copy().close +
-    '">×</button></div><div class="media-controls" aria-label="' +
-    copy().details +
-    '">' +
-    groups
-      .map(
-        (group) =>
-          '<button type="button" data-group="' +
-          group +
-          '" aria-controls="media-panel" aria-pressed="' +
-          (group === "overview") +
-          '">' +
-          copy()[group] +
-          "</button>",
-      )
-      .join("") +
-    '</div><div class="media-panel" id="media-panel">' +
-    overview(entry) +
-    "</div>";
-  show(dialog, trigger);
+  $("#case-study").innerHTML =
+    `<header class="case-nav"><a href="/" data-home>← ${text("Back to desktop", "กลับสู่เดสก์ท็อป")}</a><span>PIXEL//OS <span class="case-file">/ ${route.kind === "projects" ? "PROJECT" : "EXPERIENCE"}</span></span><button data-case-language>${getLanguage() === "en" ? "TH" : "EN"}</button></header><article class="case-article"><div class="case-intro"><p class="eyebrow">${e(item.type)}</p><h1 tabindex="-1">${e(item.title)}</h1><p class="case-summary">${e(item.summary)}</p><div class="case-facts"><div><span>${text("Date", "วันที่")}</span><p>${e(date(item))}</p>${["agri", "depa-2026-third-place"].includes(raw.id) ? `<small>${copy().dateContext}</small>` : ""}</div><div><span>${copy().outcome}</span><p>${e(item.outcome || item.type)}</p></div><div><span>${copy().role}</span><p>${e(item.whatIDid)}</p></div></div></div><nav class="media-controls" aria-label="Story media">${groups.map((g) => `<button data-group="${g}" aria-pressed="${g === "overview"}" aria-controls="media-panel">${copy()[g]}</button>`).join("")}</nav><div class="media-panel overview" id="media-panel">${overview(raw)}</div><footer class="case-footer"><a href="/" data-home>← ${text("Back to desktop", "กลับสู่เดสก์ท็อป")}</a><a href="mailto:${portfolio.profile.contact.email}">${text("Ask me about this project", "พูดคุยเกี่ยวกับโครงงานนี้")} ↗</a></footer></article>`;
+  window.scrollTo(0, 0);
+  $("#case-study h1").focus({ preventScroll: true });
 }
-function openImage(trigger) {
-  const dialog = $("#lightbox");
-  dialog.setAttribute("aria-label", trigger.dataset.alt);
-  dialog.innerHTML =
-    '<div class="lightbox-head"><a href="' +
-    escape(trigger.dataset.image) +
-    '" download>' +
-    copy().download +
-    '</a><button type="button" class="close-button" data-close aria-label="' +
-    copy().close +
-    '">×</button></div><img src="' +
-    escape(trigger.dataset.image) +
-    '" alt="' +
-    escape(trigger.dataset.alt) +
-    '">';
-  show(dialog, trigger);
+function home() {
+  current = null;
+  pause($("#case-study"));
+  $("#case-study").hidden = true;
+  $("#case-study").innerHTML = "";
+  $("#desktop").hidden = false;
+  document.body.classList.remove("case-open");
+  document.title = "PIXEL//OS — Tankhun Srijankaew";
+  lastTrigger?.isConnected
+    ? lastTrigger.focus()
+    : $("#desktop-icons button").focus();
 }
-for (const dialog of document.querySelectorAll("dialog")) {
-  dialog.addEventListener("close", () => {
-    dialog.querySelectorAll("video").forEach((video) => video.pause());
-    returnFocus.get(dialog)?.focus();
-  });
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) {
-      const rect = dialog.getBoundingClientRect();
-      if (
-        event.clientX < rect.left ||
-        event.clientX > rect.right ||
-        event.clientY < rect.top ||
-        event.clientY > rect.bottom
-      )
-        dialog.close();
-    }
-  });
+function pixelTransition() {
+  if (document.body.classList.contains("reduce-motion")) return;
+  document.querySelector(".pixel-transition")?.remove();
+  const overlay = document.createElement("div");
+  overlay.className = "pixel-transition";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.innerHTML = Array.from(
+    { length: 48 },
+    (_, i) =>
+      `<i style="--delay:${(i % 8) * 18 + Math.floor(i / 8) * 12}ms"></i>`,
+  ).join("");
+  document.body.append(overlay);
+  setTimeout(() => overlay.remove(), 550);
 }
+function navigate(path, push = true) {
+  if (push) {
+    history.pushState({ pixel: true }, "", path);
+    pixelTransition();
+  }
+  const route = resolveRoute(path, entries);
+  if (route) renderCase(route);
+  else if (path === "/") home();
+  else {
+    $("#desktop").hidden = true;
+    $("#case-study").hidden = false;
+    $("#case-study").innerHTML =
+      '<div class="missing-page"><h1>File not found</h1><a href="/" data-home>Back to desktop</a></div>';
+  }
+}
+window.addEventListener("popstate", () => navigate(location.pathname, false));
 document.addEventListener("click", (event) => {
-  const trigger = event.target.closest("button");
-  if (!trigger) return;
-  if (trigger.dataset.entry) openEntry(trigger.dataset.entry, trigger);
-  if (trigger.hasAttribute("data-close")) trigger.closest("dialog").close();
-  if (trigger.dataset.image) openImage(trigger);
-  if (trigger.dataset.group) {
-    const dialog = trigger.closest("dialog");
-    dialog.querySelectorAll("video").forEach((video) => video.pause());
-    dialog
-      .querySelectorAll("[data-group]")
-      .forEach((button) =>
-        button.setAttribute("aria-pressed", String(button === trigger)),
-      );
-    $("#media-panel").innerHTML = media(activeEntry, trigger.dataset.group);
-    if (trigger.dataset.group === 'pdfs') {
-      const readers = [...document.querySelectorAll('[data-pdf]')];
-      import('./pdf-viewer.js?v=20260929-media').then(({mountReader}) => readers.forEach(root => {
-        if (root.isConnected) mountReader(root, language);
-      })).catch(() => readers.forEach(root => { root.textContent = copy().openFile + ' ↗'; }));
+  const route = event.target.closest("[data-route]");
+  if (
+    route &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    event.button === 0
+  ) {
+    event.preventDefault();
+    lastTrigger = route;
+    navigate(new URL(route.href).pathname);
+    return;
+  }
+  if (
+    event.target.closest("[data-home]") &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    event.button === 0
+  ) {
+    event.preventDefault();
+    navigate("/");
+    return;
+  }
+  const b = event.target.closest("button");
+  if (b?.classList.contains("scene-launch") && motion && !reducedMotion()) {
+    const ripple = document.createElement("span");
+    ripple.className = "scene-click-ripple";
+    ripple.setAttribute("aria-hidden", "true");
+    b.querySelector(".scene-float").append(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), {
+      once: true,
+    });
+    setTimeout(() => ripple.remove(), 800);
+  }
+  if (!b) return;
+  if (b.id === "pixel-buddy") {
+    buddyIndex++;
+    $("#buddy-message").textContent = buddyMessage(buddyIndex, getLanguage());
+    clearTimeout(buddyTimer);
+    b.classList.remove("waving");
+    if (motion && !reducedMotion()) {
+      void b.offsetWidth;
+      b.classList.add("waving");
+      buddyTimer = setTimeout(() => b.classList.remove("waving"), 800);
     }
-    dialog.scrollTop = 0;
+  }
+  if (b.dataset.app) openApp(b.dataset.app, b);
+  if (b.dataset.task) {
+    const w = windows.get(b.dataset.task);
+    if (active === b.dataset.task && !w.minimized) minimize(b.dataset.task);
+    else {
+      focusWindow(b.dataset.task);
+      w.node.querySelector(".window-body").focus();
+    }
+  }
+  if (b.dataset.windowClose) closeWindow(b.dataset.windowClose);
+  if (b.dataset.minimize) minimize(b.dataset.minimize);
+  if (b.dataset.maximize) {
+    const node = windows.get(b.dataset.maximize).node,
+      max = node.classList.toggle("maximized");
+    b.setAttribute("aria-pressed", max);
+    b.setAttribute(
+      "aria-label",
+      (max ? "Restore " : "Maximize ") + apps[b.dataset.maximize],
+    );
+    rememberWindow(b.dataset.maximize);
+  }
+  if (b.hasAttribute("data-launcher")) {
+    const menu = $("#launcher-menu");
+    menu.hidden = !menu.hidden;
+    b.setAttribute("aria-expanded", !menu.hidden);
+    if (!menu.hidden) menu.querySelector("button").focus();
+  }
+  if (b.dataset.filter) {
+    const root = b.closest(".window-body");
+    root
+      .querySelectorAll("[data-filter]")
+      .forEach((n) => n.setAttribute("aria-pressed", n === b));
+    const competition = (p) =>
+      !["tira-iot-training", "minister-exhibition"].includes(p.id);
+    const filtered =
+      b.dataset.filter === "competition"
+        ? entries.filter(competition)
+        : b.dataset.filter === "activity"
+          ? entries.filter((p) => !competition(p))
+          : entries;
+    root.querySelector("#achievement-files").innerHTML = filtered
+      .map((p) => fileCard(p, "achievements"))
+      .join("");
+  }
+  if (b.dataset.album) renderAlbum(b.dataset.album, Number(b.dataset.index));
+  if (b.dataset.wallpaper || b.dataset.world) {
+    wallpaper = b.dataset.wallpaper || b.dataset.world;
+    localStorage.setItem("pixel-wallpaper", wallpaper);
+    preferences();
+    renderWorld();
+    if (windows.has("settings")) fillApp("settings");
+    if (b.dataset.world) $(`[data-world="${wallpaper}"]`).focus();
+    else
+      windows
+        .get("settings")
+        .node.querySelector(`[data-wallpaper="${wallpaper}"]`)
+        .focus();
+  }
+  if (b.hasAttribute("data-motion")) {
+    motion = !motion;
+    localStorage.setItem("pixel-motion-explicit", motion ? "on" : "off");
+    preferences();
+    if (windows.has("settings")) fillApp("settings");
+    const target = b.closest("#motion-notice")
+      ? $("#motion-notice [data-motion]")
+      : windows.get("settings")?.node.querySelector("[data-motion]");
+    target?.focus();
+  }
+  if (b.dataset.document) {
+    const raw = entries.find((p) => p.id === b.dataset.document),
+      f = raw.media.pdfs[Number(b.dataset.documentIndex)],
+      root = $("#research-reader");
+    root.innerHTML = `<h3>${e(f.title)}</h3><a href="${e(asset(f.src))}" target="_blank" rel="noopener noreferrer">${copy().openFile} ↗</a> · <a href="${e(asset(f.src))}" download>${copy().download}</a><div class="pdf-preview" data-pdf="${e(asset(f.src))}"></div>`;
+    mountPdfs(root);
+    root.scrollIntoView({ block: "start", behavior: "instant" });
+  }
+  if (b.dataset.group && current) {
+    const root = $("#case-study");
+    pause(root);
+    root
+      .querySelectorAll("[data-group]")
+      .forEach((n) => n.setAttribute("aria-pressed", n === b));
+    const panel = $("#media-panel");
+    panel.className = "media-panel " + b.dataset.group;
+    panel.innerHTML = media(current.entry, b.dataset.group);
+    mountPdfs(panel);
+  }
+  if (b.dataset.image) {
+    const dialog = $("#lightbox");
+    lastImageTrigger = b;
+    dialog.setAttribute("aria-label", b.dataset.alt || "Image viewer");
+    dialog.innerHTML = `<div class="lightbox-head"><a href="${e(b.dataset.image)}" download>${copy().download}</a><button data-image-close aria-label="Close image">×</button></div><img src="${e(b.dataset.image)}" alt="${e(b.dataset.alt)}">`;
+    dialog.showModal();
+    dialog.querySelector("button").focus();
+  }
+  if (b.hasAttribute("data-image-close")) $("#lightbox").close();
+  if (b.id === "language-toggle" || b.hasAttribute("data-case-language")) {
+    setLanguage(getLanguage() === "en" ? "th" : "en");
+    localStorage.setItem("pixel-language", getLanguage());
+    renderShell();
+    for (const id of windows.keys()) fillApp(id);
+    if (current) renderCase(current);
   }
 });
-function closeMenu() {
-  $("#nav-links").classList.remove("open");
-  $(".nav-toggle").setAttribute("aria-expanded", "false");
-}
-$(".nav-toggle").addEventListener("click", () => {
-  const open = $("#nav-links").classList.toggle("open");
-  $(".nav-toggle").setAttribute("aria-expanded", String(open));
+$(".desktop-field").addEventListener("pointermove", (event) => {
+  if (
+    small() ||
+    current ||
+    active ||
+    !motion ||
+    reducedMotion() ||
+    event.pointerType !== "mouse"
+  )
+    return;
+  const art = $("#wallpaper-art");
+  const buddy = $("#pixel-buddy");
+  const bounds = buddy.getBoundingClientRect();
+  const gaze = buddyGaze(
+    event.clientX - bounds.x - bounds.width / 2,
+    event.clientY - bounds.y - bounds.height / 2,
+  );
+  buddy.style.setProperty("--gaze-x", gaze.x + "px");
+  buddy.style.setProperty("--gaze-y", gaze.y + "px");
+  clearTimeout(gazeTimer);
+  gazeTimer = setTimeout(resetGaze, 900);
+  art.style.setProperty(
+    "--look-x",
+    ((event.clientX / innerWidth - 0.5) * 10).toFixed(1) + "px",
+  );
+  art.style.setProperty(
+    "--look-y",
+    ((event.clientY / innerHeight - 0.5) * 6).toFixed(1) + "px",
+  );
 });
-$("#nav-links").addEventListener("click", (event) => {
-  if (event.target.closest("a")) closeMenu();
+$(".desktop-field").addEventListener("pointerleave", () => {
+  resetGaze();
+  $("#wallpaper-art").style.removeProperty("--look-x");
+  $("#wallpaper-art").style.removeProperty("--look-y");
+});
+$("#lightbox").addEventListener(
+  "close",
+  () => lastImageTrigger?.isConnected && lastImageTrigger.focus(),
+);
+$("#lightbox").addEventListener("click", (event) => {
+  if (event.target === $("#lightbox")) {
+    const r = event.target.getBoundingClientRect();
+    if (
+      event.clientX < r.left ||
+      event.clientX > r.right ||
+      event.clientY < r.top ||
+      event.clientY > r.bottom
+    )
+      event.target.close();
+  }
+});
+document.addEventListener("change", (event) => {
+  if (event.target.id === "album-select") renderAlbum(event.target.value, 0);
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && $("#nav-links").classList.contains("open")) {
-    closeMenu();
-    $(".nav-toggle").focus();
+  if (
+    event.key !== "Escape" ||
+    $("#lightbox").open ||
+    $("#boot-screen").open ||
+    document.fullscreenElement
+  )
+    return;
+  if (!$("#launcher-menu").hidden) {
+    $("#launcher-menu").hidden = true;
+    $("[data-launcher]").setAttribute("aria-expanded", "false");
+    $("[data-launcher]").focus();
+  } else if (active && !current) closeWindow(active);
+});
+window.addEventListener("resize", () => {
+  for (const [, w] of windows) {
+    if (!small()) placeWindow(w);
+  }
+  if (active) focusWindow(active);
+  else {
+    $("#desktop-icons").inert = false;
+    $(".welcome-note").inert = false;
   }
 });
-$("#language-toggle").addEventListener("click", () => {
-  language = language === "en" ? "th" : "en";
-  render();
+function clock() {
+  const now = new Date();
+  $("#clock").dateTime = now.toISOString();
+  $("#clock").textContent = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(now);
+  $("#clock").title = now.toLocaleDateString();
+}
+clock();
+setInterval(clock, 30000);
+setLanguage(localStorage.getItem("pixel-language") === "th" ? "th" : "en");
+renderShell();
+if (location.pathname !== "/") navigate(location.pathname, false);
+else startBoot();
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-replay-intro]")) startBoot(true);
 });
-render();

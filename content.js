@@ -1,14 +1,19 @@
 export const ui = {
   en: {
     home: "Home",
-    projects: "Competitions",
-    achievements: "Activities",
+    projects: "Work",
+    achievements: "Recognition",
     about: "About",
     skills: "Skills",
     contact: "Contact",
     menu: "Menu",
     portfolio: "Student portfolio / Nakhon Ratchasima",
-    headline: "Computer vision. Connected prototypes.",
+    headline: "Ideas, made tangible.",
+    heroCaption: "Presenting Grow a Garden · depa 2026",
+    recognition: "Competitions & recognition",
+    recognitionTitle: "The work, put to the test.",
+    recognitionIntro:
+      "Results, competition stages, and the evidence behind them.",
     intro:
       "I’m Tankhun, an AI-programme student. I lead team projects, develop software, work with hardware, and present what we build.",
     view: "Explore my work",
@@ -17,7 +22,7 @@ export const ui = {
     observe: "Understand the problem",
     build: "Build & connect",
     test: "Test & explain",
-    workTitle: "Competitions & projects",
+    workTitle: "Selected work",
     workIntro:
       "Five team projects across agriculture, heritage, mobility, online safety, and health research.",
     awardsTitle: "Training & exhibitions",
@@ -70,14 +75,18 @@ export const ui = {
   },
   th: {
     home: "หน้าแรก",
-    projects: "การแข่งขัน",
-    achievements: "กิจกรรม",
+    projects: "ผลงาน",
+    achievements: "รางวัลและการแข่งขัน",
     about: "เกี่ยวกับผม",
     skills: "ทักษะ",
     contact: "ติดต่อ",
     menu: "เมนู",
     portfolio: "แฟ้มผลงานนักเรียน / นครราชสีมา",
-    headline: "Computer Vision และต้นแบบที่เชื่อมต่อกัน",
+    headline: "จากไอเดีย สู่สิ่งที่สร้างได้จริง",
+    heroCaption: "นำเสนอ Grow a Garden · depa 2026",
+    recognition: "รางวัลและการแข่งขัน",
+    recognitionTitle: "ผลงานบนเวทีจริง",
+    recognitionIntro: "ผลการแข่งขัน รอบที่เข้าร่วม และหลักฐานของแต่ละรายการ",
     intro:
       "ผมชื่อแทนคุณ เป็นนักเรียนแผนการเรียน AI ผมนำทีมทำโครงงาน พัฒนาซอฟต์แวร์ ร่วมทำฮาร์ดแวร์ และนำเสนอสิ่งที่เราสร้าง",
     view: "สำรวจผลงาน",
@@ -86,7 +95,7 @@ export const ui = {
     observe: "ทำความเข้าใจปัญหา",
     build: "สร้างและเชื่อมต่อ",
     test: "ทดสอบและอธิบาย",
-    workTitle: "การแข่งขันและโครงงาน",
+    workTitle: "ผลงานที่คัดเลือก",
     workIntro:
       "โครงงานทีม 5 ชิ้น ครอบคลุมเกษตร มรดกทางวัฒนธรรม การเดินทาง ความปลอดภัยออนไลน์ และแนวคิดวิจัยสุขภาพ",
     awardsTitle: "อบรมและนิทรรศการ",
@@ -156,7 +165,8 @@ export const thEntries = {
     skills: ["Flutter", "Supabase", "MQTT", "AI", "IoT"],
     approach:
       "ใช้ Flutter และ Supabase ร่วมกับ MQTT เพื่อเชื่อมข้อมูลเซนเซอร์และบันทึกค่าดิน ดึงข้อมูลอากาศจาก Open-Meteo และใช้ Gemini ช่วยวิเคราะห์ฟาร์มและให้คำแนะนำควบคู่กับระบบแนะนำแบบกฎ ฟังก์ชันเหล่านี้มีการพัฒนาใช้งานในโครงงานแล้ว ไม่ใช่เพียงแผนพัฒนาในอนาคต",
-    outcome: "Bronze ภูมิภาคอีสานกลาง · รอบประเทศ 210 ทีมสุดท้าย · ไม่ได้รับรางวัลรอบประเทศ",
+    outcome:
+      "Bronze ภูมิภาคอีสานกลาง · รอบประเทศ 210 ทีมสุดท้าย · ไม่ได้รับรางวัลรอบประเทศ",
   },
   "phishwall-ai": {
     title: "PhishWall AI",
@@ -189,10 +199,17 @@ export const thEntries = {
       "สื่อสารนวัตกรรมสุขภาพให้ชัดเจน โดยระบุขอบเขตว่าเป็นการคัดกรองเบื้องต้น ไม่ใช่การวินิจฉัยโรค",
     whatILearned:
       "ผมได้เรียนรู้การวางทิศทางงานและประสานทีมให้พัฒนาแนวคิดร่วมกัน ฝึกค้นคว้าและเรียบเรียงข้อมูลเทคนิคเป็นเอกสารโครงงาน รวมถึงการออกแบบลำดับฉากและพากย์เสียงให้ผู้ชมเข้าใจแนวคิดการตรวจวัด OCR และ TropoBot โดยแยกเป้าหมายการวิจัยออกจากผลที่ผ่านการยืนยันทางคลินิก",
-    skills: ["การนำทีม", "การเขียนเอกสาร", "งานวิจัย", "ออกแบบฉากวิดีโอ", "พากย์เสียง"],
+    skills: [
+      "การนำทีม",
+      "การเขียนเอกสาร",
+      "งานวิจัย",
+      "ออกแบบฉากวิดีโอ",
+      "พากย์เสียง",
+    ],
     approach:
       "เอกสารเสนอแนวทางอ่านผลตรวจด้วย OCR และสื่อสารข้อมูลผ่าน TropoBot ยังไม่ใช่อุปกรณ์ที่ผ่านการรับรองหรือยืนยันผลทางคลินิก และไม่ใช้แทนการวินิจฉัย",
-    outcome: "รองชนะเลิศอันดับ 2 เหรียญทอง รอบคัดเลือก · รอบชิงประเทศ 24 ต.ค. 2569 ยังไม่ได้เข้าร่วม",
+    outcome:
+      "รองชนะเลิศอันดับ 2 เหรียญทอง รอบคัดเลือก · รอบชิงประเทศ 24 ต.ค. 2569 ยังไม่ได้เข้าร่วม",
   },
   "youth-innovation": {
     title: "Heritage AI: แพลตฟอร์ม Smart Heritage AIoT",
@@ -330,6 +347,7 @@ export const thEntries = {
   "depa-2025-national": {
     outcome: "ผ่านคัดเลือกและเข้าร่วมรอบระดับประเทศ · Coding Thailand 2025",
     title: "depa 2025: รถตรวจจับวัชพืชและฉีดพ่นเฉพาะจุด",
+    approach: "ใช้ CiRA Core AI ตรวจจับวัชพืช ร่วมกับกลไกควบคุมด้วยเซอร์โวเพื่อฉีดพ่นสารกำจัดวัชพืชเฉพาะจุดที่ตรวจพบ เป้าหมายคือหลีกเลี่ยงการใช้สารเคมีในจุดที่ไม่จำเป็น โดยยังไม่ระบุตัวเลขประสิทธิภาพการลดสารเคมีที่ไม่ได้วัดยืนยัน",
     type: "รอบการแข่งขันระดับประเทศ",
     summary:
       "พัฒนาโครงงานรถตรวจจับวัชพืชและจัดการฉีดพ่นเฉพาะจุด โดยมีเป้าหมายลดการใช้สารเคมี ผ่านเข้าสู่การแข่งขันระดับประเทศ National Coding & AI Competition ภายใต้โครงการ Coding Thailand 2025: AI-Driven Future ของ depa ใบประกาศเข้าร่วมรอบประเทศออกให้วันที่ 5 ตุลาคม 2568",
