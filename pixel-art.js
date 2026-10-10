@@ -135,3 +135,19 @@ export function buddyMessage(index, language = "en") {
     ((index % messages.length) + messages.length) % messages.length
   ][language === "th" ? 1 : 0];
 }
+export function buddyProp(theme = "sky") {
+  const art = {
+    sky: '<path fill="#202c40" d="M3 6h22v17H3zM12 23h4v5H8v3h13v-3h-5v-5z"/><path fill="#bcd9f4" d="M6 9h16v11H6z"/><path fill="#3359d9" d="M9 12h10v2H9zM9 16h6v2H9z"/>',
+    mint: '<path fill="#202c40" d="M8 9h13v17H8zM18 15h9v4h-9zM2 12h7v3H5v6h4v3H2z"/><path fill="#b5dbbd" d="M11 12h7v11h-7z"/><g class="watering-drops" fill="#3359d9"><path d="M25 23h3v4h-3zM29 28h3v4h-3z"/></g><path fill="#679875" d="M28 29h2v5h-2zM25 28h4v2h-4zM30 26h4v3h-4z"/><path fill="#f27965" d="M26 33h7v3h-7z"/>',
+    dusk: '<path fill="#202c40" d="M2 14h22v7H2zM12 21h3v9h-3zM8 30h11v3H8zM21 11h7v13h-7z"/><path fill="#9c96cb" d="M5 16h16v3H5z"/><path fill="#bcd9f4" d="M24 14h2v7h-2z"/><path fill="#f8f5ed" d="M14 2h3v3h3v3h-3v3h-3V8h-3V5h3z"/>',
+  };
+  return `<svg class="buddy-prop" data-theme="${theme}" viewBox="0 0 36 36" aria-hidden="true" shape-rendering="crispEdges">${art[theme] || art.sky}</svg>`;
+}
+export function rareDetail(theme = "sky") {
+  const art = {
+    sky: '<path fill="#f8f5ed" d="M5 15h6v-4h10v4h7v5H5z"/>',
+    mint: '<path fill="#679875" d="M70 15h6v3h4v5h-7v-3h-3z"/>',
+    dusk: '<path fill="#f8f5ed" d="M36 10h4v4h-4z"/><path fill="#f8f5ed" opacity=".45" d="M23 7h13v2H23zM18 4h9v2h-9z"/>',
+  };
+  return `<g class="rare-detail rare-${theme}" aria-hidden="true">${art[theme] || art.sky}</g>`;
+}

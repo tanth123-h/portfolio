@@ -545,7 +545,7 @@ button svg {
 .buddy-desk {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 34px;
   margin-top: 18px;
   max-width: 345px;
 }
@@ -1921,4 +1921,322 @@ fieldset p {
   .case-nav > span {
     display: none;
   }
+}
+
+/* Final interaction polish keeps original pixel art and smooth motion. */
+.archive-search {
+  margin: 20px 0 28px;
+}
+.archive-search label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.archive-search > div {
+  display: flex;
+  gap: 8px;
+}
+.archive-search input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink, #202c40);
+  background: #f8f5ed;
+  color: #202c40;
+  font: inherit;
+}
+.archive-search button {
+  min-height: 44px;
+  padding: 8px 14px;
+  flex-shrink: 0;
+}
+.archive-search p {
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+.search-empty {
+  grid-column: 1 / -1;
+  padding: 24px;
+  border: 1px dashed #202c40;
+}
+.buddy-idle {
+  position: relative;
+}
+.buddy-prop {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  right: -25px;
+  bottom: 8px;
+  opacity: 0;
+  pointer-events: none;
+  animation: buddy-task 20s ease-in-out infinite;
+}
+.watering-drops {
+  animation: water-drops 1.2s ease-in infinite;
+}
+.rare-detail {
+  opacity: 0;
+  pointer-events: none;
+}
+.rare-sky {
+  animation: rare-cloud 26s linear infinite;
+}
+.rare-mint {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rare-leaf 23s ease-in-out infinite;
+}
+.rare-dusk {
+  animation: rare-star 29s linear infinite;
+}
+@keyframes buddy-task {
+  0%,
+  64%,
+  94%,
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  69%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes water-drops {
+  from {
+    opacity: 0.8;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+@keyframes rare-cloud {
+  0%,
+  65%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  70% {
+    opacity: 0.65;
+    transform: translateX(0);
+  }
+  92% {
+    opacity: 0.65;
+    transform: translateX(110px);
+  }
+  97% {
+    opacity: 0;
+    transform: translateX(125px);
+  }
+}
+@keyframes rare-leaf {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0);
+  }
+  74% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  91% {
+    opacity: 1;
+    transform: translate(20px, 48px) rotate(90deg);
+  }
+  97% {
+    opacity: 0;
+    transform: translate(25px, 65px) rotate(120deg);
+  }
+}
+@keyframes rare-star {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  89% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  93% {
+    opacity: 0;
+    transform: translate(85px, 20px);
+  }
+}
+.home-busy :is(.buddy-prop, .watering-drops, .rare-detail),
+.case-open :is(.buddy-prop, .watering-drops, .rare-detail) {
+  animation-play-state: paused;
+}
+.reduce-motion :is(.buddy-prop, .rare-detail) {
+  opacity: 0;
+}
+.story-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.story-share button {
+  min-height: 44px;
+  padding: 10px 14px;
+}
+.story-share [role="status"] {
+  font-size: 13px;
+}
+.manual-copy {
+  width: 100%;
+  font-size: 13px;
+}
+.manual-copy input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  font: inherit;
+}
+.story-share [hidden] {
+  display: none;
+}
+.video-block [hidden] {
+  display: none;
+}
+.video-status {
+  padding: 12px;
+  border-left: 3px solid #3359d9;
+  background: #f8f5ed;
+  color: #202c40;
+}
+.video-block button {
+  min-height: 44px;
+  margin: 8px 12px 8px 0;
+  padding: 10px;
+}
+.desktop-icon {
+  position: relative;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+.desktop-icon:is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+}
+.desktop-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 18px;
+  width: max-content;
+  max-width: 190px;
+  padding: 8px 10px;
+  font: 12px var(--body, sans-serif);
+  line-height: 1.4;
+  background: #f8f5ed;
+  color: #202c40;
+  border: 1px solid #202c40;
+  box-shadow: 3px 3px 0 #202c40;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 8;
+  transition: opacity 120ms ease;
+}
+.desktop-icon:is(:hover, :focus-visible)::after {
+  opacity: 1;
+  transition-delay: 300ms;
+}
+@media (hover: none) {
+  .desktop-icon::after {
+    display: none;
+  }
+  .desktop-icon:hover {
+    transform: none;
+  }
+}
+@media (max-width: 800px) {
+  .desktop-icon::after {
+    display: none;
+  }
+}
+.lightbox-caption {
+  color: #202c40;
+  margin: 12px auto;
+  padding: 0 20px;
+  max-width: 900px;
+  font-size: 14px;
+}
+#pixel-buddy:not(.waving) .buddy-arm {
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  animation: bit-monitor-check 20s ease-in-out infinite;
+}
+[data-wallpaper="mint"] #pixel-buddy:not(.waving) .buddy-arm {
+  animation-name: bit-water;
+}
+[data-wallpaper="dusk"] #pixel-buddy:not(.waving) .buddy-arm {
+  animation-name: bit-stars;
+}
+@keyframes bit-monitor-check {
+  0%,
+  64%,
+  94%,
+  100% {
+    transform: rotate(0);
+  }
+  70%,
+  78%,
+  86% {
+    transform: rotate(15deg);
+  }
+  74%,
+  82% {
+    transform: rotate(5deg);
+  }
+}
+@keyframes bit-water {
+  0%,
+  64%,
+  94%,
+  100% {
+    transform: rotate(0);
+  }
+  70%,
+  86% {
+    transform: rotate(28deg);
+  }
+  76%,
+  82% {
+    transform: rotate(22deg);
+  }
+}
+@keyframes bit-stars {
+  0%,
+  64%,
+  94%,
+  100% {
+    transform: rotate(0);
+  }
+  70%,
+  88% {
+    transform: rotate(-25deg);
+  }
+}
+.home-busy #pixel-buddy .buddy-arm,
+.case-open #pixel-buddy .buddy-arm {
+  animation-play-state: paused;
+}
+#pixel-buddy.waving .buddy-prop {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+.reduce-motion #pixel-buddy.waving .buddy-prop {
+  opacity: 0;
 }

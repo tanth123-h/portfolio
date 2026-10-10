@@ -26,6 +26,16 @@ export const e = (v = "") =>
   );
 export const local = (raw) =>
   language === "th" ? { ...raw, ...thEntries[raw.id] } : raw;
+export function searchArchive(items, query = "") {
+  const words = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  return items.filter((item) => {
+    const haystack = JSON.stringify([
+      item,
+      thEntries[item.id] || {},
+    ]).toLocaleLowerCase();
+    return words.every((word) => haystack.includes(word));
+  });
+}
 export const asset = (src) => src?.replace(/^\.\//, "/") || "";
 export const date = (raw) =>
   (language === "th" ? raw.dateTh : raw.date) || copy().dateUnknown;
@@ -204,7 +214,7 @@ export function media(raw, group) {
       if (group === "pdfs")
         return `<section class="document-block"><div class="file-row"><h2>${e(item.title)}</h2><a href="${e(src)}" target="_blank" rel="noopener noreferrer">${copy().openFile} ↗</a><a href="${e(src)}" download>${copy().download}</a></div><div class="pdf-preview" data-pdf="${e(src)}"></div></section>`;
       if (group === "videos")
-        return `<section class="video-block"><h2>${e(item.title)}</h2><video controls playsinline preload="none" aria-label="${e(item.title)}" poster="${e(src.replace("/videos/", "/previews/").replace(".mp4", ".jpg"))}" src="${e(src.replace("/videos/", "/video-web/"))}"></video><a href="${e(src)}" download>${copy().download}</a></section>`;
+        return `<section class="video-block"><h2>${e(item.title)}</h2><video controls playsinline preload="none" aria-label="${e(item.title)}" poster="${e(src.replace("/videos/", "/previews/").replace(".mp4", ".jpg"))}" src="${e(src.replace("/videos/", "/video-web/"))}"></video><p class="video-status" role="status" hidden></p><button data-video-retry hidden>${language === "th" ? "ลองโหลดอีกครั้ง" : "Retry video"}</button><a href="${e(src)}" target="_blank" rel="noopener noreferrer">${copy().openFile} ↗</a> · <a href="${e(src)}" download>${copy().download}</a></section>`;
       return `<button class="media-image" data-image="${e(src)}" data-alt="${e(item.alt || item.title)}">${image(item)}<span>${e(item.title)} ↗</span></button>`;
     })
     .join("");

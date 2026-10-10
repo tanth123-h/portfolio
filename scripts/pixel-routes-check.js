@@ -2,7 +2,12 @@ async (page) => {
   const base = new URL(page.url()).origin,
     errors = [];
   page.on("pageerror", (err) => errors.push(err.message));
-  await page.goto(base);
+  const home = async () => {
+    await page.goto(base);
+    if (await page.locator("#boot-screen").evaluate((n) => n.open))
+      await page.locator("#boot-skip").click();
+  };
+  await home();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator("#desktop-icons [data-app=projects]").click();
   const projects = await page
@@ -26,7 +31,7 @@ async (page) => {
       });
     if (broken.length) throw Error("Broken images at " + href + ": " + broken);
   }
-  await page.goto(base);
+  await home();
   await page.locator("#desktop-icons [data-app=projects]").focus();
   await page.keyboard.press("Enter");
   await page.locator("[data-window=projects] .file-card").first().focus();
@@ -37,7 +42,7 @@ async (page) => {
   await page.goForward();
   if (!(await page.locator("#case-study").isVisible()))
     throw Error("Forward did not restore story");
-  await page.goto(base);
+  await home();
   await page.setViewportSize({ width: 375, height: 850 });
   await page.locator("#desktop-icons [data-app=projects]").click();
   await page.locator("[data-launcher]").click();

@@ -1,4 +1,12 @@
-import { sprite, scene, water, mascot, buddyMessage } from "./pixel-art.js";
+import {
+  sprite,
+  scene,
+  water,
+  mascot,
+  buddyMessage,
+  buddyProp,
+  rareDetail,
+} from "./pixel-art.js";
 import { shouldBoot, buddyGaze } from "./boot-state.js";
 import {
   boundedPosition,
@@ -24,6 +32,7 @@ import {
   overview,
   media,
   contactSheet,
+  searchArchive,
 } from "./portfolio-view.js";
 const $ = (s) => document.querySelector(s);
 const apps = {
@@ -36,6 +45,8 @@ const apps = {
   settings: "SETTINGS",
 };
 const windows = new Map();
+const archiveQueries = new Map();
+let achievementFilter = "all";
 let layer = 10,
   active = null,
   current = null,
@@ -152,6 +163,8 @@ function preferences() {
 preferences();
 $("#pixel-buddy").innerHTML = `<span class="buddy-idle">${mascot()}</span>`;
 function renderWorld() {
+  $("#pixel-buddy").innerHTML =
+    `<span class="buddy-idle">${mascot()}${buddyProp(wallpaper)}</span>`;
   $("#wallpaper-art").innerHTML =
     `<button class="scene-launch" data-app="projects" aria-label="${text("Explore projects from the workbench", "เปิดโครงงานจากโต๊ะทดลอง")}"><span class="scene-float">${scene(wallpaper)}</span><span class="scene-caption">${text({ sky: "Floating workbench", mint: "Garden lab", dusk: "Night observatory" }[wallpaper], { sky: "โต๊ะทดลองบนเกาะลอย", mint: "สวนทดลอง", dusk: "หอดูดาวยามค่ำ" }[wallpaper])}<span class="scene-open">${text("Click to explore", "คลิกเพื่อสำรวจ")}</span></span></button>`;
   $(".world-switcher").innerHTML = ["sky", "mint", "dusk"]
@@ -170,6 +183,7 @@ function renderWorld() {
   );
   $("#buddy-message").textContent = buddyMessage(buddyIndex, getLanguage());
   $(".scene-float").insertAdjacentHTML("beforeend", water(wallpaper));
+  $(".pixel-scene").insertAdjacentHTML("beforeend", rareDetail(wallpaper));
   $("#mobile-tide").innerHTML = water(wallpaper);
   motionHint();
 }
@@ -178,7 +192,7 @@ function renderShell() {
   $("#desktop-icons").innerHTML = Object.entries(apps)
     .map(
       ([id, label]) =>
-        `<button class="desktop-icon" data-app="${id}">${sprite(id)}<span>${label}</span></button>`,
+        `<button class="desktop-icon" data-app="${id}" data-tooltip="${text({ projects: "Explore projects", achievements: "Results & experiences", memories: "Browse photo albums", about: "Meet Tankhun", research: "Read documents", contact: "Get in touch", settings: "Desktop preferences" }[id], { projects: "สำรวจโครงงาน", achievements: "ผลการแข่งขันและประสบการณ์", memories: "ดูภาพกิจกรรม", about: "รู้จักแทนคุณ", research: "อ่านเอกสาร", contact: "ติดต่อ", settings: "ตั้งค่าเดสก์ท็อป" }[id])}">${sprite(id)}<span>${label}</span></button>`,
     )
     .join("");
   $("#launcher-menu").innerHTML = Object.entries(apps)
@@ -217,7 +231,12 @@ function taskbar() {
 }
 function focusWindow(id) {
   const w = windows.get(id);
-  if (!w) return;
+  if (!w || w.pending === "close") return;
+  const restoring = w.minimized || w.pending === "minimize";
+  w.transition?.cancel();
+  w.transition = null;
+  w.pending = null;
+  w.node.inert = false;
   active = id;
   w.minimized = false;
   w.node.hidden = false;
@@ -231,6 +250,44 @@ function focusWindow(id) {
   for (const selector of ["#desktop-icons", ".welcome-note"])
     $(selector).inert = small();
   taskbar();
+  if (restoring && motion)
+    w.node.animate(
+      [
+        { opacity: 0, transform: "translateY(14px) scale(.96)" },
+        { opacity: 1, transform: "none" },
+      ],
+      { duration: 240, easing: "ease-out" },
+    );
+}
+function exitWindow(w, action, finish) {
+  if (w.pending) return;
+  w.pending = action;
+  w.node.inert = true;
+  if (!motion) {
+    finish();
+    return;
+  }
+  const animation = w.node.animate(
+    [
+      { opacity: 1, transform: "none" },
+      {
+        opacity: 0,
+        transform:
+          action === "minimize" ? "translateY(28px) scale(.94)" : "scale(.97)",
+      },
+    ],
+    { duration: 180, easing: "ease-in", fill: "forwards" },
+  );
+  w.transition = animation;
+  animation.finished
+    .then(() => {
+      if (w.transition !== animation) return;
+      finish();
+      animation.cancel();
+      w.transition = null;
+      w.pending = null;
+    })
+    .catch(() => {});
 }
 function pause(root) {
   root.querySelectorAll("video").forEach((v) => v.pause());
@@ -277,36 +334,41 @@ function closeWindow(id) {
   if (!w) return;
   rememberWindow(id);
   pause(w.node);
-  w.node.remove();
-  windows.delete(id);
-  active = null;
-  const prev = [...windows].reverse().find(([, item]) => !item.minimized);
-  if (prev) {
-    focusWindow(prev[0]);
-    prev[1].node.querySelector(".window-body").focus();
-  } else {
-    taskbar();
-    $("#desktop-icons").inert = false;
-    $(".welcome-note").inert = false;
-    if (w.trigger?.isConnected) w.trigger.focus();
-  }
+  exitWindow(w, "close", () => {
+    w.node.remove();
+    windows.delete(id);
+    active = null;
+    const prev = [...windows].reverse().find(([, item]) => !item.minimized);
+    if (prev) {
+      focusWindow(prev[0]);
+      prev[1].node.querySelector(".window-body").focus();
+    } else {
+      taskbar();
+      $("#desktop-icons").inert = false;
+      $(".welcome-note").inert = false;
+      if (w.trigger?.isConnected) w.trigger.focus();
+    }
+  });
 }
 function minimize(id) {
   const w = windows.get(id);
+  if (!w) return;
   pause(w.node);
-  w.minimized = true;
-  w.node.hidden = true;
-  active = null;
-  const next = [...windows]
-    .reverse()
-    .find(([key, item]) => key !== id && !item.minimized);
-  if (next) focusWindow(next[0]);
-  else {
-    taskbar();
-    $("#desktop-icons").inert = false;
-    $(".welcome-note").inert = false;
-  }
-  $('#task-buttons [data-task="' + id + '"]').focus();
+  exitWindow(w, "minimize", () => {
+    w.minimized = true;
+    w.node.hidden = true;
+    active = null;
+    const next = [...windows]
+      .reverse()
+      .find(([key, item]) => key !== id && !item.minimized);
+    if (next) focusWindow(next[0]);
+    else {
+      taskbar();
+      $("#desktop-icons").inert = false;
+      $(".welcome-note").inert = false;
+    }
+    $('#task-buttons [data-task="' + id + '"]').focus();
+  });
 }
 function openApp(id, trigger) {
   if (!apps[id]) return;
@@ -411,6 +473,72 @@ function openApp(id, trigger) {
 }
 const intro = (title, desc) =>
   `<div class="app-intro"><h3>${title}</h3><p>${desc}</p></div>`;
+function archiveSearch(id) {
+  return `<div class="archive-search"><label for="search-${id}">${text("Search files", "ค้นหาผลงาน")}</label><div><input id="search-${id}" type="search" data-search="${id}" value="${e(archiveQueries.get(id) || "")}" placeholder="${text("Title, skill or result…", "ชื่อ ทักษะ หรือผลการแข่งขัน…")}" aria-controls="archive-${id}"><button data-clear-search="${id}">${text("Clear", "ล้าง")}</button></div><p data-search-count="${id}" role="status" aria-live="polite"></p></div>`;
+}
+function updateArchive(id) {
+  const root = windows.get(id)?.node;
+  if (!root) return;
+  let items = id === "projects" ? projects : entries;
+  const isActivity = (p) =>
+    ["tira-iot-training", "minister-exhibition"].includes(p.id);
+  if (id === "achievements" && achievementFilter !== "all")
+    items = items.filter(
+      (p) => isActivity(p) === (achievementFilter === "activity"),
+    );
+  const filtered = searchArchive(items, archiveQueries.get(id) || "");
+  const grid = root.querySelector(`[data-archive="${id}"]`);
+  grid.id = id === "achievements" ? "achievement-files" : `archive-${id}`;
+  root
+    .querySelector(`[data-search="${id}"]`)
+    .setAttribute("aria-controls", grid.id);
+  grid.innerHTML = filtered.length
+    ? filtered.map((p) => fileCard(p, id)).join("")
+    : `<p class="search-empty">${text("No matching files. Try another term or clear the search.", "ไม่พบผลงาน ลองคำอื่นหรือล้างการค้นหา")}</p>`;
+  root.querySelector(`[data-search-count="${id}"]`).textContent = text(
+    `${filtered.length} of ${items.length} files`,
+    `${filtered.length} จาก ${items.length} รายการ`,
+  );
+}
+document.addEventListener("input", (event) => {
+  const id = event.target.dataset.search;
+  if (!id) return;
+  archiveQueries.set(id, event.target.value);
+  updateArchive(id);
+});
+function videoStatus(event) {
+  const video = event.target;
+  if (!(video instanceof HTMLVideoElement)) return;
+  const root = video.closest(".video-block");
+  if (!root) return;
+  const status = root.querySelector(".video-status");
+  const failed = event.type === "error" || Boolean(video.error);
+  const loading =
+    !failed && ["loadstart", "waiting", "stalled"].includes(event.type);
+  status.hidden = !failed && !loading;
+  status.textContent = failed
+    ? text(
+        "Could not load video. Retry or open the original file.",
+        "โหลดวิดีโอไม่ได้ ลองอีกครั้งหรือเปิดไฟล์ต้นฉบับ",
+      )
+    : text("Loading video…", "กำลังโหลดวิดีโอ…");
+  root.querySelector("[data-video-retry]").hidden = !failed;
+}
+for (const type of [
+  "loadstart",
+  "waiting",
+  "stalled",
+  "playing",
+  "loadeddata",
+  "error",
+])
+  document.addEventListener(type, videoStatus, true);
+document.addEventListener("click", (event) => {
+  const retry = event.target.closest("[data-video-retry]");
+  if (!retry) return;
+  const video = retry.closest(".video-block").querySelector("video");
+  video.load();
+});
 function fillApp(id) {
   const body = windows.get(id).node.querySelector(".window-body");
   if (id === "projects")
@@ -422,7 +550,8 @@ function fillApp(id) {
           "เปิดโครงงานเพื่ออ่านรายละเอียด บทบาท และดูหลักฐานการทำงาน",
         ),
       ) +
-      `<div class="file-grid">${projects.map((p) => fileCard(p)).join("")}</div>`;
+      archiveSearch(id) +
+      `<div class="file-grid" data-archive="projects"></div>`;
   if (id === "achievements")
     body.innerHTML =
       intro(
@@ -439,11 +568,12 @@ function fillApp(id) {
       ]
         .map(
           ([v, label]) =>
-            `<button data-filter="${v}" aria-pressed="${v === "all"}">${label}</button>`,
+            `<button data-filter="${v}" aria-pressed="${v === achievementFilter}">${label}</button>`,
         )
         .join(
           "",
-        )}</div><div class="file-grid" id="achievement-files">${entries.map((p) => fileCard(p, "achievements")).join("")}</div>`;
+        )}</div>${archiveSearch(id)}<div class="file-grid" id="achievement-files" data-archive="achievements"></div>`;
+  if (["projects", "achievements"].includes(id)) updateArchive(id);
   if (id === "about")
     body.innerHTML =
       intro("Tankhun Srijankaew", "นายแทนคุณ ศรีจันทร์แก้ว") +
@@ -564,6 +694,10 @@ function renderCase(route) {
   ];
   $("#case-study").innerHTML =
     `<header class="case-nav"><a href="/" data-home>← ${text("Back to desktop", "กลับสู่เดสก์ท็อป")}</a><span>PIXEL//OS <span class="case-file">/ ${route.kind === "projects" ? "PROJECT" : "EXPERIENCE"}</span></span><button data-case-language>${getLanguage() === "en" ? "TH" : "EN"}</button></header><article class="case-article"><div class="case-intro"><p class="eyebrow">${e(item.type)}</p><h1 tabindex="-1">${e(item.title)}</h1><p class="case-summary">${e(item.summary)}</p><div class="case-facts"><div><span>${text("Date", "วันที่")}</span><p>${e(date(item))}</p>${["agri", "depa-2026-third-place"].includes(raw.id) ? `<small>${copy().dateContext}</small>` : ""}</div><div><span>${copy().outcome}</span><p>${e(item.outcome || item.type)}</p></div><div><span>${copy().role}</span><p>${e(item.whatIDid)}</p></div></div></div><nav class="media-controls" aria-label="Story media">${groups.map((g) => `<button data-group="${g}" aria-pressed="${g === "overview"}" aria-controls="media-panel">${copy()[g]}</button>`).join("")}</nav><div class="media-panel overview" id="media-panel">${overview(raw)}</div><footer class="case-footer"><a href="/" data-home>← ${text("Back to desktop", "กลับสู่เดสก์ท็อป")}</a><a href="mailto:${portfolio.profile.contact.email}">${text("Ask me about this project", "พูดคุยเกี่ยวกับโครงงานนี้")} ↗</a></footer></article>`;
+  $(".case-intro").insertAdjacentHTML(
+    "beforeend",
+    `<div class="story-share"><button data-copy-story>${text("Copy story link", "คัดลอกลิงก์ผลงาน")}</button><span role="status" data-copy-status></span><label hidden class="manual-copy">${text("Select and copy this link", "เลือกและคัดลอกลิงก์นี้")}<input readonly aria-label="${text("Story link", "ลิงก์ผลงาน")}"></label></div>`,
+  );
   window.scrollTo(0, 0);
   $("#case-study h1").focus({ preventScroll: true });
 }
@@ -689,17 +823,16 @@ document.addEventListener("click", (event) => {
     root
       .querySelectorAll("[data-filter]")
       .forEach((n) => n.setAttribute("aria-pressed", n === b));
-    const competition = (p) =>
-      !["tira-iot-training", "minister-exhibition"].includes(p.id);
-    const filtered =
-      b.dataset.filter === "competition"
-        ? entries.filter(competition)
-        : b.dataset.filter === "activity"
-          ? entries.filter((p) => !competition(p))
-          : entries;
-    root.querySelector("#achievement-files").innerHTML = filtered
-      .map((p) => fileCard(p, "achievements"))
-      .join("");
+    achievementFilter = b.dataset.filter;
+    updateArchive("achievements");
+  }
+  if (b.dataset.clearSearch) {
+    const id = b.dataset.clearSearch;
+    archiveQueries.set(id, "");
+    const input = windows.get(id).node.querySelector(`[data-search="${id}"]`);
+    input.value = "";
+    updateArchive(id);
+    input.focus();
   }
   if (b.dataset.album) renderAlbum(b.dataset.album, Number(b.dataset.index));
   if (b.dataset.wallpaper || b.dataset.world) {
@@ -749,6 +882,10 @@ document.addEventListener("click", (event) => {
     lastImageTrigger = b;
     dialog.setAttribute("aria-label", b.dataset.alt || "Image viewer");
     dialog.innerHTML = `<div class="lightbox-head"><a href="${e(b.dataset.image)}" download>${copy().download}</a><button data-image-close aria-label="Close image">×</button></div><img src="${e(b.dataset.image)}" alt="${e(b.dataset.alt)}">`;
+    const caption = document.createElement("p");
+    caption.className = "lightbox-caption";
+    caption.textContent = b.dataset.alt || "";
+    dialog.append(caption);
     dialog.showModal();
     dialog.querySelector("button").focus();
   }
@@ -759,6 +896,34 @@ document.addEventListener("click", (event) => {
     renderShell();
     for (const id of windows.keys()) fillApp(id);
     if (current) renderCase(current);
+  }
+});
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-copy-story]");
+  if (!button || !current) return;
+  const share = button.closest(".story-share");
+  const link = new URL(
+    routeFor(current.entry.id, current.kind),
+    location.origin,
+  ).href;
+  try {
+    await navigator.clipboard.writeText(link);
+    share.querySelector("[data-copy-status]").textContent = text(
+      "Link copied",
+      "คัดลอกลิงก์แล้ว",
+    );
+    share.querySelector(".manual-copy").hidden = true;
+  } catch {
+    share.querySelector("[data-copy-status]").textContent = text(
+      "Clipboard unavailable. Copy below.",
+      "คัดลอกอัตโนมัติไม่ได้ กรุณาคัดลอกด้านล่าง",
+    );
+    const label = share.querySelector(".manual-copy");
+    label.hidden = false;
+    const input = label.querySelector("input");
+    input.value = link;
+    input.focus();
+    input.select();
   }
 });
 $(".desktop-field").addEventListener("pointermove", (event) => {

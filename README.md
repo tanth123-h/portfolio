@@ -31,6 +31,16 @@ To regenerate, make `sharp` available as a development tool and run `node script
 
 Videos use compressed streaming copies, real preview frames, and `preload="none"`; original files remain available for download. PDFs render on demand with zoom, pagination, and fullscreen. No media autoplays.
 
+## Final interaction polish
+
+Projects and Achievements support bilingual search. Experience filters combine with the search and survive language changes. Case studies have a copy-link button with a manual-copy fallback when clipboard access is denied. Videos show loading/error feedback and can be retried; the original file remains available. The photo viewer includes the evidence caption.
+
+Bit periodically checks a monitor (Sky), waters a small plant (Mint), or uses a telescope (Dusk). Clicking Bit reveals the themed prop immediately. Each large scene has one infrequent detail, not a particle field. Ambient motion pauses behind apps; the explicit motion-off switch disables it. Windows retain keyboard focus while opening, minimizing, restoring and closing.
+
+Run `scripts/pixel-final-polish-check.js`, `scripts/pixel-final-access-check.js`, and `scripts/pixel-window-motion-check.js` through the existing Playwright CLI workflow. These supplement the default-motion, media, boot-containment and routing checks.
+
+Vercel uses explicit story-route rewrites to `index.html` with `cleanUrls: false`. Do not enable `cleanUrls` while retaining `.html` rewrite destinations. Missing asset requests must remain real 404 responses, not the HTML application shell.
+
 ## Browser regression checks
 
 Start a local server. Open a named session with Playwright CLI, then execute the function in `scripts/pixel-check.js` with its `run-code` command:
